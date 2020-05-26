@@ -5,7 +5,7 @@ namespace St8_ment
 {
     public interface IState { };
 
-    public interface IState<TContext> : IState where TContext : IStateContext
+    public interface IState<TContext> : IState where TContext : IStateContext<TContext>
     {
         TContext Context { get; }
 

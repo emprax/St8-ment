@@ -9,7 +9,7 @@ namespace St8_ment.Example.Console
 
         protected override Task Transition(StateTransaction<StopAction, ProcessingState> transaction, IStateMachine<ExampleContext> stateMachine, CancellationToken cancellationToken)
         {
-            transaction.State.Context.State = stateMachine.Find<DoneState>();
+            transaction.State.Context.SetState(stateMachine.Find<DoneState>(transaction.State.Context));
             return Task.CompletedTask;
         }
     }

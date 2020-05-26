@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace St8_ment.DependencyInjection
 {
-    public class StateMachineBuilder<TContext> : IStateMachineBuilder<TContext> where TContext : IStateContext
+    public class StateMachineBuilder<TContext> : IStateMachineBuilder<TContext> where TContext : IStateContext<TContext>
     {
         private readonly IServiceCollection services;
-        private readonly IDictionary<int, Func<IServiceProvider, IState<TContext>>> states;
+        private readonly IDictionary<int, Func<IServiceProvider, TContext, IState<TContext>>> states;
 
         public StateMachineBuilder(IServiceCollection services)
         {
             this.services = services;
-            this.states = new Dictionary<int, Func<IServiceProvider, IState<TContext>>>();
+            this.states = new Dictionary<int, Func<IServiceProvider, TContext, IState<TContext>>>();
         }
 
         public IStateMachineBuilder<TContext> For<TState>(IStateConfiguration<TState, TContext> configuration) where TState : class, IState<TContext>
@@ -30,9 +30,20 @@ namespace St8_ment.DependencyInjection
             return this;
         }
 
+        public IStateMachineBuilder<TContext> For<TState>() where TState : class, IState<TContext>
+        {
+            var result = new EmptyStateConfiguration<TState, TContext>().Build(this.services);
+            this.states.Add(typeof(TState).GetHashCode(), result);
+            return this;
+        }
+
         public IStateMachine<TContext> Build(IServiceProvider provider)
         {
-            return new StateMachine<TContext>(this.states.ToDictionary(x => x.Key, x => x.Value.Invoke(provider)));
+            return new StateMachine<TContext>(this.states.ToDictionary(x => x.Key, x => new Func<TContext, IState<TContext>>(context =>
+            {
+                var state = x.Value.Invoke(provider, context);
+                return state;
+            })));
         }
     }
 }

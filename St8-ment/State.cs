@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace St8_ment
 {
     public abstract class State<TSelf, TContext> : IState<TContext> 
-        where TContext : IStateContext
+        where TContext : IStateContext<TContext>
         where TSelf : class, IState<TContext>
     {
         private readonly IStateTransitionProvider provider;

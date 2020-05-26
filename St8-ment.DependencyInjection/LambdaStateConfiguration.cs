@@ -4,7 +4,7 @@ namespace St8_ment.DependencyInjection
 {
     public class LambdaStateConfiguration<TState, TContext> : StateConfiguration<TState, TContext>
         where TState : class, IState<TContext>
-        where TContext : IStateContext
+        where TContext : IStateContext<TContext>
     {
         private readonly Action<IStateConfigurator<TState, TContext>> configuration;
 

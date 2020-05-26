@@ -9,9 +9,9 @@ namespace St8_ment.DependencyInjection
         where TState : class, IState
     {
         private readonly IServiceCollection services;
-        private readonly IList<Type> actions;
+        private readonly IDictionary<int, Type> actions;
 
-        public ActionConfiguration(IServiceCollection services, IList<Type> actions)
+        public ActionConfiguration(IServiceCollection services, IDictionary<int, Type> actions)
         {
             this.services = services;
             this.actions = actions;
@@ -20,7 +20,7 @@ namespace St8_ment.DependencyInjection
         public void Transition<TTransition>() where TTransition : class, IStateTransition<StateTransaction<TAction, TState>>
         {
             this.services.AddTransient<IStateTransition<StateTransaction<TAction, TState>>, TTransition>();
-            this.actions.Add(typeof(TAction));
+            this.actions.Add(typeof(StateTransaction<TAction, TState>).GetHashCode(), typeof(IStateTransition<StateTransaction<TAction, TState>>));
         }
     }
 }

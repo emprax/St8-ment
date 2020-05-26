@@ -5,7 +5,7 @@ namespace St8_ment
 {
     public class StateTransitionProvider<TState, TContext> : IStateTransitionProvider 
         where TState : class, IState<TContext>
-        where TContext : IStateContext
+        where TContext : IStateContext<TContext>
     {
         private readonly IDictionary<int, Func<IStateTransitionMarker>> transitionRegistrations;
 
@@ -16,7 +16,7 @@ namespace St8_ment
 
         public IStateTransition<TTransaction> Find<TTransaction>() where TTransaction : ITransaction
         {
-            if (!this.transitionRegistrations.TryGetValue(typeof(TTransaction).GetHashCode(), out var value) || !(value is IStateTransition<TTransaction> transition))
+            if (!this.transitionRegistrations.TryGetValue(typeof(TTransaction).GetHashCode(), out var value) || !(value.Invoke() is IStateTransition<TTransaction> transition))
             {
                 return null;
             }

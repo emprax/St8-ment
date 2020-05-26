@@ -5,8 +5,8 @@ namespace St8_ment.DependencyInjection
 {
     public interface IStateConfiguration<out TState, TContext> 
         where TState : class, IState<TContext>
-        where TContext : IStateContext
+        where TContext : IStateContext<TContext>
     {
-        Func<IServiceProvider, TState> Build(IServiceCollection services);
+        Func<IServiceProvider, TContext, TState> Build(IServiceCollection services);
     }
 }

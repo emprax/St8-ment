@@ -6,12 +6,12 @@ namespace St8_ment.DependencyInjection
 {
     public class StateConfigurator<TState, TContext> : IStateConfigurator<TState, TContext>
         where TState : class, IState<TContext>
-        where TContext : IStateContext
+        where TContext : IStateContext<TContext>
     {
-        private readonly IList<Type> actions;
+        private readonly IDictionary<int, Type> actions;
         private IServiceCollection services;
 
-        public StateConfigurator(IServiceCollection services, IList<Type> actions)
+        public StateConfigurator(IServiceCollection services, IDictionary<int, Type> actions)
         {
             this.services = services;
             this.actions = actions;
