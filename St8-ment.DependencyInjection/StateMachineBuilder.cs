@@ -32,7 +32,7 @@ namespace St8_ment.DependencyInjection
 
         public IStateMachineBuilder<TContext> For<TState>() where TState : class, IState<TContext>
         {
-            var result = new EmptyStateConfiguration<TState, TContext>().Build(this.services);
+            var result = new LambdaStateConfiguration<TState, TContext>(_ => { }).Build(this.services);
             this.states.Add(typeof(TState).GetHashCode(), result);
             return this;
         }
