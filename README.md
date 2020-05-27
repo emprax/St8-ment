@@ -5,7 +5,7 @@ A dynamic state/state-machine pattern library for SOLID state pattern design. Th
 
 The transitions hold the state-logic that is usually housed in the state-object itself, when regarding the standard State Pattern, but is confined to the amount of methods a state holds. The state in this case usually contains the same methods as the context it is considered to be the state for. So extending the amount of operations that require state specific transitions can only be achieved by modifying the class-structure of both the state and the context. 
 
-![state](docs\standard-state.png)
+![state](docs/standard-state.png)
 
 Next to that the amount of responsibilities is increased, the abstraction for the those objects are growing as well and the most configurations require the objects to communicate with one-another by the means of their concrete implementations instead of an abstraction. So altogether this pattern can cause some problems in regards to violating the SOLID design principles, although this is mostly accepted as this pattern is considered to be quite a well fitting solution. This library tries to solve the aforementioned issues and takes the inspiration from multiple other initiatives like, i.e., the Redux Pattern. 
 
@@ -13,10 +13,10 @@ Next to that the amount of responsibilities is increased, the abstraction for th
 
 The library consists of state-machines that provide and create the state-objects for a specific context each. The state-objects refer to a provider/registry which stores all the different transition-objects from that state, where these transition-objects are stored in a key-value store by which the actions function as keys. When a state does contain a transition-object for a specific action, then that transition can be applied.
 
-![state-machine](docs\St8-ment-state.png)
+![state-machine](docs/St8-ment-state.png)
 
 **Note:** The transition-objects are called transitions because of there purpose/behavior, but be aware that a transition-object is not always a single transition as it more or less an equivalent to the effects from the Redux libraries. They hold the state-logic like the methods in the standard state-pattern and can therefore make a decision to transition to one state or, when a specific condition fails for example, it could determine to transition to a different state or even none at all when no conditions are met. But these choices lay in the hands of the developer of specific transitions.
 
 ### How it works
 
-![st8-ment](docs\St8-ment-diagram.png)
+[st8-ment](docs/St8-ment-diagram.png)
