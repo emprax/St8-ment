@@ -1,6 +1,4 @@
 ﻿namespace St8_ment.Example.Console
 {
-    public class StartAction : IAction<InitialState>
-    {
-    }
+    public class StartAction : IAction { }
 }

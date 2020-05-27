@@ -17,7 +17,7 @@ namespace St8_ment.DependencyInjection
             this.actions = actions;
         }
 
-        public IActionConfiguration<TAction, TState> On<TAction>() where TAction : IAction<TState>
+        public IActionConfiguration<TAction, TState> On<TAction>() where TAction : IAction
         {
             return new ActionConfiguration<TAction, TState>(this.services, this.actions);
         }

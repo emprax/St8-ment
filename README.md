@@ -19,4 +19,14 @@ The library consists of state-machines that provide and create the state-objects
 
 ### How it works
 
+The diagram shown below is there to support the understanding of the system and it bears quite some similarity to the Redux diagram that can be found quite easily online. The numbers in the diagram refer to the described steps. **Note:** A separate path that can be taken and is determined by condition is not shown as a number but will be described in the steps.
+
 ![st8-ment](docs/St8-ment-diagram.png)
+
+**Steps:**
+
+1. The context (mostly a system or aggregate-root) contains the state and an accept method that accepts an action. 
+2. The actions is transported to the state and accepted by the state its own accept method.
+3. The incoming action is being verified by the state, to determine whether there is a transition related to that action. This verification is achieved by determining whether the TransitionProvider actually contains a transition for this action.
+4. When this is the case, the chosen transition executes its logic by which it can then use the state-machine to choose the next state. 
+5. The state is eventually set to the context and the cycle is complete. But when the transition cannot be found, a boolean determining the success of the transition returned by the accepting methods to be false and no state changes are have been made.

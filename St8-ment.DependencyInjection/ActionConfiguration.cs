@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace St8_ment.DependencyInjection
 {
     public class ActionConfiguration<TAction, TState> : IActionConfiguration<TAction, TState> 
-        where TAction : IAction<TState>
+        where TAction : IAction
         where TState : class, IState
     {
         private readonly IServiceCollection services;

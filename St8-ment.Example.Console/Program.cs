@@ -20,12 +20,11 @@ namespace St8_ment.Example.Console
                 .GetRequiredService<IStateMachine<ExampleContext>>();
 
             var context = new ExampleContext();
-            var state = stateMachine.Find<InitialState>(context);
-            context.SetState(state);
+            var state = stateMachine.Apply<InitialState>(context);
 
-            var is_valid_1 = await context.Apply(new StartAction(), CancellationToken.None);
-            var is_valid_2 = await context.Apply(new StopAction(), CancellationToken.None);
-            var is_valid_3 = await context.Apply(new StopAction(), CancellationToken.None);
+            var is_valid_1 = await context.Accept(new StartAction(), CancellationToken.None);
+            var is_valid_2 = await context.Accept(new StopAction(), CancellationToken.None);
+            var is_valid_3 = await context.Accept(new StopAction(), CancellationToken.None);
 
             Assert(is_valid_1);     // Should be successful
             Assert(is_valid_2);     // Should be successful

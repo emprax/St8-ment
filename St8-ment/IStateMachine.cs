@@ -2,6 +2,6 @@
 {
     public interface IStateMachine<TContext> where TContext : IStateContext<TContext>
     {
-        TState Find<TState>(TContext context) where TState : class, IState<TContext>;
+        bool Apply<TState>(TContext context) where TState : class, IState<TContext>;
     }
 }

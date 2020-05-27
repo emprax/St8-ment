@@ -12,14 +12,15 @@ namespace St8_ment
             this.registrations = registrations;
         }
 
-        public TState Find<TState>(TContext context) where TState : class, IState<TContext>
+        public bool Apply<TState>(TContext context) where TState : class, IState<TContext>
         {
             if (!this.registrations.TryGetValue(typeof(TState).GetHashCode(), out var value) || !(value?.Invoke(context) is TState state))
             {
-                return null;
+                return false;
             }
 
-            return state;
+            context.SetState(state);
+            return true;
         }
     }
 }

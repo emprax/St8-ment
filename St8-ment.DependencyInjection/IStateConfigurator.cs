@@ -4,6 +4,6 @@
         where TState : class, IState<TContext>
         where TContext : IStateContext<TContext>
     {
-        IActionConfiguration<TAction, TState> On<TAction>() where TAction : IAction<TState>;
+        IActionConfiguration<TAction, TState> On<TAction>() where TAction : IAction;
     }
 }

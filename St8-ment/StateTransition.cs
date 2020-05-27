@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 namespace St8_ment
 {
     public abstract class StateTransition<TState, TContext, TAction> : IStateTransition<StateTransaction<TAction, TState>> 
-        where TAction : IAction<TState> 
-        where TState : class, IState<TContext>
+        where TAction : IAction
+        where TState : class, IState
         where TContext : IStateContext<TContext>
     {
         private readonly IStateMachine<TContext> stateMachine;

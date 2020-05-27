@@ -7,6 +7,6 @@ namespace St8_ment
     {
         void SetState<TState>(TState state) where TState : class, IState<TContext>;
 
-        Task<bool> Apply<TAction>(TAction action, CancellationToken cancellationToken) where TAction : IAction;
+        Task<bool> Accept<TAction>(TAction action, CancellationToken cancellationToken) where TAction : IAction;
     }
 }
