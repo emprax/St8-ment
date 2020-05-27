@@ -19,4 +19,4 @@ The library consists of state-machines that provide and create the state-objects
 
 ### How it works
 
-![](docs\St8-ment-diagram.png)
+![st8-ment](docs\St8-ment-diagram.png)
