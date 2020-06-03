@@ -7,9 +7,9 @@ namespace St8_ment
         where TContext : IStateContext<TContext>
         where TSelf : class, IState<TContext>
     {
-        private readonly IStateTransitionProvider provider;
+        private readonly IStateTransitionerProvider provider;
 
-        protected State(TContext context, IStateTransitionProvider provider)
+        protected State(TContext context, IStateTransitionerProvider provider)
         {
             this.Context = context;
             this.provider = provider;
@@ -21,13 +21,13 @@ namespace St8_ment
 
         public async Task<bool> Accept<TAction>(TAction action, CancellationToken cancellationToken) where TAction : IAction
         {
-            var transition = this.provider.Find<StateTransaction<TAction, TSelf>>();
-            if (transition is null)
+            var transitioner = this.provider.Find<StateTransaction<TAction, TSelf>>();
+            if (transitioner is null)
             {
                 return false;
             }
 
-            await transition.Handle(new StateTransaction<TAction, TSelf>(action, this.GetSelf()), cancellationToken);
+            await transitioner.Handle(new StateTransaction<TAction, TSelf>(action, this.GetSelf()), cancellationToken);
             return true;
         }
     }

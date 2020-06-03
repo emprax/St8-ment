@@ -12,8 +12,8 @@ namespace St8_ment.Example.Console
             var stateMachine = new ServiceCollection()
                 .AddStateMachine<ExampleContext>(builder =>
                 {
-                    builder.For<InitialState>(configurator => configurator.On<StartAction>().Transition<StartTransition>());
-                    builder.For<ProcessingState>(configurator => configurator.On<StopAction>().Transition<StopTransition>());
+                    builder.For<InitialState>(configurator => configurator.On<StartAction>().Transition<StartTransitioner>());
+                    builder.For<ProcessingState>(configurator => configurator.On<StopAction>().Transition<StopTransitioner>());
                     builder.For<DoneState>();
                 })
                 .BuildServiceProvider()

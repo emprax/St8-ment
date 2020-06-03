@@ -4,6 +4,6 @@
         where TAction : IAction
         where TState : class, IState
     {
-        void Transition<TTransition>() where TTransition : class, IStateTransition<StateTransaction<TAction, TState>>;
+        void Transition<TTransitioner>() where TTransitioner : class, IStateTransitioner<StateTransaction<TAction, TState>>;
     }
 }

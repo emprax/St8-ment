@@ -29,7 +29,7 @@ namespace St8_ment.DependencyInjection
                     {
                         return new StateTransitionProvider<TState, TContext>(actions.ToDictionary(
                             pair => pair.Key,
-                            pair => new Func<IStateTransitionMarker>(() => provider.GetService(pair.Value) as IStateTransitionMarker)));
+                            pair => new Func<IStateTransitionerMarker>(() => provider.GetService(pair.Value) as IStateTransitionerMarker)));
                     }
 
                     return x.ParameterType != typeof(TContext) 

@@ -17,10 +17,10 @@ namespace St8_ment.DependencyInjection
             this.actions = actions;
         }
 
-        public void Transition<TTransition>() where TTransition : class, IStateTransition<StateTransaction<TAction, TState>>
+        public void Transition<TTransitioner>() where TTransitioner : class, IStateTransitioner<StateTransaction<TAction, TState>>
         {
-            this.services.AddTransient<IStateTransition<StateTransaction<TAction, TState>>, TTransition>();
-            this.actions.Add(typeof(StateTransaction<TAction, TState>).GetHashCode(), typeof(IStateTransition<StateTransaction<TAction, TState>>));
+            this.services.AddTransient<IStateTransitioner<StateTransaction<TAction, TState>>, TTransitioner>();
+            this.actions.Add(typeof(StateTransaction<TAction, TState>).GetHashCode(), typeof(IStateTransitioner<StateTransaction<TAction, TState>>));
         }
     }
 }

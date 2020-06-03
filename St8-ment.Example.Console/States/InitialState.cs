@@ -2,7 +2,7 @@
 {
     public class InitialState : State<InitialState, ExampleContext>
     {
-        public InitialState(ExampleContext context, IStateTransitionProvider provider) : base(context, provider)
+        public InitialState(ExampleContext context, IStateTransitionerProvider provider) : base(context, provider)
         {
             this.Name = "The initial state";
         }

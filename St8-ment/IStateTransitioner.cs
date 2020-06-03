@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace St8_ment
 {
-    public interface IStateTransitionMarker { }
+    public interface IStateTransitionerMarker { }
 
-    public interface IStateTransition<in TTransaction> : IStateTransitionMarker where TTransaction : ITransaction
+    public interface IStateTransitioner<in TTransaction> : IStateTransitionerMarker where TTransaction : ITransaction
     {
         Task Handle(TTransaction action, CancellationToken cancellationToken);
     }

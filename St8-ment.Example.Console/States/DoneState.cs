@@ -2,7 +2,7 @@
 {
     public class DoneState : State<DoneState, ExampleContext>
     {
-        public DoneState(ExampleContext context, IStateTransitionProvider provider) : base(context, provider)
+        public DoneState(ExampleContext context, IStateTransitionerProvider provider) : base(context, provider)
         {
             this.Name = "The processing state";
         }

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace St8_ment.Example.Console
 {
-    public class StopTransition : StateTransition<ProcessingState, ExampleContext, StopAction>
+    public class StopTransitioner : StateTransitioner<ProcessingState, ExampleContext, StopAction>
     {
-        public StopTransition(IStateMachine<ExampleContext> stateMachine) : base(stateMachine) { }
+        public StopTransitioner(IStateMachine<ExampleContext> stateMachine) : base(stateMachine) { }
 
         protected override Task Transition(StateTransaction<StopAction, ProcessingState> transaction, IStateMachine<ExampleContext> stateMachine, CancellationToken cancellationToken)
         {
