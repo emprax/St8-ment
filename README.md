@@ -30,3 +30,75 @@ The diagram shown below is there to support the understanding of the system and 
 3. The incoming action is being verified by the state, to determine whether there is a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
 4. When this is the case, the chosen transitioner executes its logic by which it can then use the state-machine to choose the next state. 
 5. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation returned by the accepting methods to be false and no state changes have been made.
+
+
+
+### Coding Guide
+
+This section emphasizes the important components of the library on the basis of some coding examples. We first start with the definition of some of the components in regard to their purpose and location within an application.
+
+#### Context
+
+The context is the state holder. It uses the state to determine which actions are allowed and how to transition to another state, by the means of the transitioners, when a certain action is being issued. 
+
+```c#
+public class Order : IAggregateRoot, IStateContext<Order>
+{
+    public IState<Order> State { get; private set; }
+    
+    public Task<bool> Accept<TAction>(TAction action, CancellationToken cancellationToken) where TAction : IAction
+    {
+        //...........
+        return State.Accept(action, cancellationToken);
+    }
+    
+    public void SetState<TState>(TState state) where TState : class, IState<ExampleContext>
+    {
+        //...........
+     	this.State = state;   
+    }
+    
+    //...........
+}
+```
+
+The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateContext<TContext> interface.
+
+#### Transitioners
+
+To implement the state transitioners it is the intention to implement the StateTransitioner abstract-class instead of the IStateTransitioner interface, as the abstraction provides just a bit more clear processing details than what the interface is providing. 
+
+```c#
+public class CancelOrderStateTransitioner : StateTransitioner<ProcessedOrderState, Order, CancelOrderAction>
+{
+    private readonly ISpecificationFactory factory;
+    
+    public CancelOrderStateTransitioner(
+        IStateMachine<ExampleContext> stateMachine, 
+        ISpecificationFactory factory) : base(stateMachine) 
+    {
+        this.factory = factory;
+    }
+    
+    protected override async Task Transition(
+        StateTransaction<CancelOrderAction, ProcessedOrderState> transaction, 
+        IStateMachine<Order> stateMachine, 
+        CancellationToken cancellationToken)
+    {
+        var specification = factory.Obtain<ProcessedOrderState>(Specification.CanCancelOrderSpec);
+        if (specification?.IsSatisfiedBy(transaction.State) ?? false)
+        {
+            await specification.Handle(transaction.State);
+            stateMachine.Apply<CancelledOrderState>(transaction.State.Context);
+            return;
+        }
+        
+		// Do nothing or change state to a specific different state that handles a failed attempt to cancel the order.
+    }
+}
+```
+
+As you can see the transitioner can handle multiple specific paths of transitioning into different states in regards to specific conditions. Notice that the StateTransitioner has three generics that have to be set. The first one the regards the current state, the second the context and the third one the action it is supposed handle.
+
+The action object itself is not that interesting as it is nearly only a label as object that can also provide some specific action-related data.
+

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using St8_ment.DependencyInjection;
+using St8_ment.DependencyInjection.V1;
+using St8_ment.Example.Console.V1;
+using St8_ment.V1;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,9 +28,9 @@ namespace St8_ment.Example.Console
             var is_valid_2 = await context.Accept(new StopAction(), CancellationToken.None);
             var is_valid_3 = await context.Accept(new StopAction(), CancellationToken.None);
 
-            Assert(is_valid_1);     // Should be successful
-            Assert(is_valid_2);     // Should be successful
-            Assert(is_valid_3);     // Should be failure
+            Assert(is_valid_1);     // Should succeed
+            Assert(is_valid_2);     // Should succeed
+            Assert(is_valid_3);     // Should fail
         }
 
         private static void Assert(bool condition)
