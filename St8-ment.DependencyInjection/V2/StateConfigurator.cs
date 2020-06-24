@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using St8_ment.V2;
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using St8_ment.V1;
 
-namespace St8_ment.DependencyInjection.V1
+namespace St8_ment.DependencyInjection.V2
 {
     public class StateConfigurator<TState, TContext> : IStateConfigurator<TState, TContext>
         where TState : class, IState<TContext>
@@ -18,9 +18,9 @@ namespace St8_ment.DependencyInjection.V1
             this.actions = actions;
         }
 
-        public IActionConfiguration<TAction, TState> On<TAction>() where TAction : IAction
+        public IActionConfiguration<TAction, TState, TContext> On<TAction>() where TAction : IAction
         {
-            return new ActionConfiguration<TAction, TState>(this.services, this.actions);
+            return new ActionConfiguration<TAction, TState, TContext>(this.services, this.actions);
         }
     }
 }

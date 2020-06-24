@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace St8_ment.V2
 {
-    public class StateTransitionerProvider<TState, TContext> : IStateTransitionerProvider<TState, TContext>
-        where TState : IState<TContext>
+    public class StateTransitionerProvider<TState, TContext> : IStateTransitionerProvider<TState, TContext> 
         where TContext : IStateContext<TContext>
+        where TState : IState<TContext>
     {
         private readonly IDictionary<int, Func<IStateTransitionerMarker>> transitioners;
 
@@ -16,7 +16,7 @@ namespace St8_ment.V2
 
         public IStateTransitioner<TAction, TState, TContext> Find<TAction>() where TAction : IAction
         {
-            transitioners.TryGetValue(typeof(IStateTransaction<TAction, TState>).GetHashCode(), out var transitioner);
+            transitioners.TryGetValue(typeof(StateTransaction<TAction, TState>).GetHashCode(), out var transitioner);
             return transitioner?.Invoke() as IStateTransitioner<TAction, TState, TContext>;
         }
     }

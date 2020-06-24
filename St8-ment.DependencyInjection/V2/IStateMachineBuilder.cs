@@ -1,7 +1,9 @@
-﻿using St8_ment.V1;
+﻿using St8_ment.V2;
 using System;
+using System.Collections;
+using System.Linq;
 
-namespace St8_ment.DependencyInjection.V1
+namespace St8_ment.DependencyInjection.V2
 {
     public interface IStateMachineBuilder<TContext> where TContext : IStateContext<TContext>
     {

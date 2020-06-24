@@ -17,7 +17,7 @@ namespace St8_ment.DependencyInjection.V1
             this.states = new Dictionary<int, Func<IServiceProvider, TContext, IState<TContext>>>();
         }
 
-        public IStateMachineBuilder<TContext> For<TState>(IStateConfiguration<TState, TContext> configuration) where TState : class, IState<TContext>
+        public IStateMachineBuilder<TContext> For<TState>(StateConfiguration<TState, TContext> configuration) where TState : class, IState<TContext>
         {
             var result = configuration.Build(this.services);
             this.states.Add(typeof(TState).GetHashCode(), result);

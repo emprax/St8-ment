@@ -8,6 +8,8 @@ namespace St8_ment.V2
     {
         TContext Context { get; }
 
+        IActionAccepter<TContext> Connect(IStateMachine<TContext> stateMachine);
+
         Type GetConcreteType();
     }
 }
