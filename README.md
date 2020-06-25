@@ -98,7 +98,96 @@ public class CancelOrderStateTransitioner : StateTransitioner<ProcessedOrderStat
 }
 ```
 
-As you can see the transitioner can handle multiple specific paths of transitioning into different states in regards to specific conditions. Notice that the StateTransitioner has three generics that have to be set. The first one the regards the current state, the second the context and the third one the action it is supposed handle.
+As you can see the transitioner can handle multiple specific paths of transitioning into different states by specific conditions. Notice that the StateTransitioner has three generics that have to be set. The first one regards the current state, the second the context and the third one the action it is supposed handle.
 
-The action object itself is not that interesting as it is nearly only a label as object that can also provide some specific action-related data.
+The action object itself is not that interesting as it is more or less only a label as object that can also contain some specific action-related data. For example:
+
+```C#
+public class CancleOrderAction : IAction { }
+```
+
+In this case there is no specific data, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects.
+
+#### States
+
+The state objects are implemented with by extending the State<TSelf, TContext> abstract class, which contains the IStateTransitionerProvider that it uses to determine the transitioner to use in regards to the provided action. When there is no transitioner for the specified action, it will simply return false to indicate the transaction failed. 
+
+```C#
+public class NewOrderState : State<NewOrderState, Order>
+{
+    public NewOrderState(ExampleContext context, IStateTransitionerProvider provider) : base(context, provider)
+    {
+        this.Name = "A new order has been created";
+    }
+
+    public string Name { get; }
+
+    protected override NewOrderState GetSelf() => this;
+}
+```
+
+This NewOrderState is an implementation of the State object. It provides its own type to the TSelf generic of the State and the Order as context to the TContext generic. The GetSelf method returns the TSelf initialized object for usage in other cases. The state can contain specific data in regard to the relation between the context and that specific state.
+
+#### Registration and usage
+
+A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the St8-ment.DependencyInjection binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the AddStateMachine extension.
+
+```C#
+services.AddStateMachine<Order>(builder => 
+{
+	builder.For<NewOrderState>(configurator => configurator.On<CheckOrderAction>().Transition<CheckNewOrderTransitioner>());
+    builder.For<CheckedOrderState>(configurator =>
+    {
+		configurator.On<RemoveOrderAction>().Transition<RemoveCheckedOrderTransitioner>());
+ 		configurator.On<DeliverOrderAction>().Transition<DeliverCheckedOrderTransitioner>());
+		configurator.On<FailedOrderAction>().Transition<FailedCheckedOrderTransitioner>());
+    });
+    builder.For<DeliveredOrderState>(new DeliveredOrderStateConfiguration());
+    builder.For<RemovedOrderState>();
+	builder.For<FailedOrderState>();
+	builder.For<CompletedOrderState>();
+});
+```
+
+A few things can be observed within this section. The configuration for a specific state is achieved by using the For method on the builder, followed by either a lambda that registers all transitioners or by a custom configuration that extends the StateConfiguration abstract class. The last option is to register nothing for a state which is necessary for assuring that the state-machine knows that state, but doesn't have any actions for it.
+
+The custom state-configurations would for example look like this:
+
+```C#
+public class DeliveredOrderStateConfiguration : StateConfiguration<DeliveredOrderState, Order>
+{
+    protected override void Configure(IStateConfigurator<TState, TContext> configurator)
+    {
+        configurator
+            .On<CancelOrderAction>()
+            .Transition<CancelDeliveredOrderTransitioner>();
+        
+        configurator
+            .On<FailedOrderAction>()
+            .Transition<FailedDeliveredOrderTransitioner>();
+        
+        configurator
+            .On<CompleteOrderAction>()
+            .Transition<CompleteDeliveredOrderTransitioner>();
+    }
+}
+```
+
+Now, when it is registered, the system can be used in software solutions. 
+
+```c#
+var order = Order.Create(...);
+stateMachine.Apply<NewOrderState>(context);
+
+......
+
+// The first state is NewOrderState which can transition into the CheckedOrderState.
+await context.Accept(new CheckOrderAction(), CancellationToken.None);	 
+
+// The CheckedOrderState can transition into the DeliveredOrderState.
+await context.Accept(new DeliverOrderAction(), CancellationToken.None);
+
+// The DeliveredOrderState can transition into the CompletedOrderState.
+await context.Accept(new CompleteOrderAction(), CancellationToken.None);
+```
 
