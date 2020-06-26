@@ -163,9 +163,9 @@ services.AddStateMachine<Order>(builder =>
     builder.For<NewOrderState>(configurator => configurator.On<CheckOrderAction>().Transition<CheckNewOrderTransitioner>());
     builder.For<CheckedOrderState>(configurator =>
     {
-	    configurator.On<RemoveOrderAction>().Transition<RemoveCheckedOrderTransitioner>());
- 	    configurator.On<DeliverOrderAction>().Transition<DeliverCheckedOrderTransitioner>());
-	    configurator.On<FailedOrderAction>().Transition<FailedCheckedOrderTransitioner>());
+        configurator.On<RemoveOrderAction>().Transition<RemoveCheckedOrderTransitioner>());
+        configurator.On<DeliverOrderAction>().Transition<DeliverCheckedOrderTransitioner>());
+        configurator.On<FailedOrderAction>().Transition<FailedCheckedOrderTransitioner>());
     });
     builder.For<DeliveredOrderState>(new DeliveredOrderStateConfiguration());
     builder.For<RemovedOrderState>();
