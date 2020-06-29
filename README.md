@@ -52,7 +52,7 @@ For V2, there are quite some changes as what was already described in the previo
 **Steps:**
 
 1. The context (again, mostly a system or aggregate-root) contains the state.
-2. The state is provided to the StateMachine which determines the right provider of transitioners for that specific state.
+2. The state is provided to the StateMachine which determines the right provider of transitioners for that specific state. Be aware that the StateMachine is used like a visitor here and it visits the state by a special Connect method, from there further preparations can be done.
 3. The TransitionerProvider is being encapsulated in an ActionAccepter and can apply an action on it.
 4. The incoming action is being verified by the ActionAccepter, to determine whether there is a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
 5. When this is the case, the chosen transitioner executes its logic by which it can then change to a next state, this makes it transition friendlier than the V1 version as the data can now be past from one state to another. 
@@ -60,7 +60,7 @@ For V2, there are quite some changes as what was already described in the previo
 
 ### Coding Guide
 
-This section emphasizes the important components of the library on the basis of some coding examples. We first start with the definition of some of the components in regard to their purpose and location within an application.
+This section emphasizes the important components of the library on the basis of some coding examples. We first start with the definition of some of the components in regard to their purpose and location within an application. At first the V1 version will be discussed and then the V2 will be compared to V1 per section.
 
 #### Context
 
@@ -88,6 +88,27 @@ public class Order : IAggregateRoot, IStateContext<Order>
 ```
 
 The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateContext<TContext> interface.
+
+##### V2
+
+The V2 version of the context looks nearly the same, but differs in a specific detail. The Accept method is removed in this version as the context purely holds the state and the state is no longer the main command-center as it is more similar to a status and data holding object that can be used in combination with an action to form a transaction to a transitioner.
+
+```c#
+public class Order : IAggregateRoot, IStateContext<Order>
+{
+    public IState<Order> State { get; private set; }
+    
+    public void SetState<TState>(TState state) where TState : class, IState<ExampleContext>
+    {
+        //...........
+     	this.State = state;   
+    }
+    
+    //...........
+}
+```
+
+
 
 #### Transitioners
 
@@ -125,13 +146,49 @@ public class CancelOrderStateTransitioner : StateTransitioner<ProcessedOrderStat
 
 As you can see the transitioner can handle multiple specific paths of transitioning into different states by specific conditions. Notice that the StateTransitioner has three generics that have to be set. The first one regards the current state, the second the context and the third one the action it is supposed handle.
 
+##### V2
+
+The V2 version of the transitioner has been drastically changed as the StateTransitioner abstract class is no longer needed to fulfill the right setup.
+
+```C#
+public class CancelOrderStateTransitioner : IStateTransitioner<ProcessedOrderState, Order, CancelOrderAction>
+{
+    private readonly ISpecificationFactory factory;
+    
+    public CancelOrderStateTransitioner(ISpecificationFactory factory) => this.factory = factory;
+    
+    public async Task Transition(IStateTransaction<CancelOrderAction, ProcessedOrderState> transaction)
+    {
+        var specification = factory.Obtain<ProcessedOrderState>(Specification.CanCancelOrderSpec);
+        if (specification?.IsSatisfiedBy(transaction.State) ?? false)
+        {
+            await specification.Handle(transaction.State);
+            transaction.State.Context.SetState(new ProcessingState(transaction.State.Context)
+            {
+                Data = transaction.State.Data
+            });
+            
+            return;
+        }
+        
+		// Do nothing or change state to a specific different state that handles a failed attempt to cancel the order.
+    }
+}
+```
+
+The IStateTransitioner interface can now be used directly. The StateMachine is no longer needed hear as it has gained a more prominent role in the V2 version. Data transaction from one state to the other is also much more intuitive.
+
+#### Actions
+
 The action object itself is not that interesting as it is more or less only a label as object that can also contain some specific action-related data. For example:
 
 ```C#
 public class CancleOrderAction : IAction { }
 ```
 
-In this case there is no specific data, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects.
+In this case there is no specific data, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects. 
+
+The V2 version of the actions are still the same.
 
 #### States
 
@@ -152,6 +209,24 @@ public class NewOrderState : State<NewOrderState, Order>
 ```
 
 This NewOrderState is an implementation of the State object. It provides its own type to the TSelf generic of the State and the Order as context to the TContext generic. The GetSelf method returns the TSelf initialized object for usage in other cases. The state can contain specific data in regard to the relation between the context and that specific state.
+
+##### V2
+
+Again, like the transitioners, the V2 version of the states are quite a bit different. The State<TSelf, TContext> abstract class is still used but is setup quite a bit differently. The GetSelf method is no longer needed to provide the state as the state can no be created simply creating a new one in the transitioner, as where the states have a more prominent role with dependencies and had to be registered in the DI. Next to that, the state needed to provide itself to the DI construction to simply construct itself, while as with the V2 this is no longer the case.
+
+```c#
+public class NewOrderState : State<NewOrderState, Order>
+{
+    public NewOrderState(ExampleContext context) : base(context)
+    {
+        this.Name = "A new order has been created";
+    }
+
+    public string Name { get; }
+}
+```
+
+Nevertheless, the State abstraction still contains a method Connect, that accepts a StateMachine. The StateMachine, used here as visitor, uses the State object type setup to create the right abstraction
 
 #### Registration and usage
 
@@ -216,3 +291,30 @@ await context.Accept(new DeliverOrderAction(), CancellationToken.None);
 await context.Accept(new CompleteOrderAction(), CancellationToken.None);
 ```
 
+##### V2
+
+The V2 version of the registrations for the StateMachines is near identical to the V1 version. The use of the StateMachine however, is a bit different.
+
+```c#
+var order = Order.Create(...);
+order.SetState(new NewOrderState(order));
+
+......
+
+// The first state is NewOrderState which can transition into the CheckedOrderState.
+await context.State
+    .Connect(stateMachine)
+    .Apply(new CheckOrderAction());
+    
+// The CheckedOrderState can transition into the DeliveredOrderState.
+await context.State
+    .Connect(stateMachine)
+    .Apply(new DeliverOrderAction());
+
+// The DeliveredOrderState can transition into the CompletedOrderState. Note the use of the StateContextExtensions Apply method.
+await context.Apply(stateMachine, new CompleteOrderAction());
+```
+
+First the state in the context is set to a new order (note that this could also be integration in a more intuitive way, but depends on the choices of the developer. The simple, but still a bit specific, use of the SetState method is being shown here to illustrate an example of usage). The state in the context is being visited by the StateMachine through the State its Connect method. The StateMachine retrieves some specific state type setup and can then retrieve the right TransitionerProvider by applying a specific ActionAccepter. The action is being applied and the system is set in motion. 
+
+Note the use of a specific extension-method called Apply, what is an extension to the IStateContext and encapsulates the aforementioned State - StateMachine - Action interaction.
