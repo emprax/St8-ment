@@ -23,6 +23,7 @@ The library provides a V1 and V2 version. The V1 is closely modelled after the S
       - [V2](#v2-4)
     + [Registration and usage](#registration-and-usage)
       - [V2](#v2-5)
+  - [Usecase](#usecase)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -344,6 +345,6 @@ Note the use of a specific extension-method called *Apply*, what is an extension
 
 
 
-## Usecases
+## Usecase
 
 This library is useful for a more dynamic and solidified state pattern design. Note that the state pattern is already known for being quite a suitable design pattern in multiple solutions. Therefore this library provides even more SOLID design in state usage. The library has quite some similarities to the Redux library, but it is still its own take on the appliance of state and the patterns that are related to that. Hence this library is more or less a combination of the state pattern and state-machine pattern with some Redux influences.
