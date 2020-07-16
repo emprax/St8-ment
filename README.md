@@ -1,4 +1,4 @@
-# St8-ment
+# <img src="C:\Repos\St8-ment\docs\St8-ment-logo.png" style="zoom:30%;" /> St8-ment
 A dynamic state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system (here called the transitioners) into individual components. The transitioners can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other chosen states. An action and the state-object itself are combined into a transaction which is the actual request model. There the actions are labels as well as models at the same time that contain the data for the requests.
 
 The library provides a V1 and V2 version. The V1 is closely modelled after the State Design Pattern, whereas the V2 version is more or less the StateMachine version of this pattern. The V2 focusses less on the behavior in the state itself. Because of this, the state does not contain specific dependencies, in contrast to the V1 version where the state contains the transitioner-provider object. The state in V1 can thus only be created by the means of deriving them from dependency injection registrations. The V2 does not place this emphasis on the state object and by this provides the possibility to use simple mapping from 1 state to another inside the provided transitioners. Conclusively this comes down at that the V1 version does not provide this possibility as the state holds the logic to determine which transitioners to use as well as that the context should at that point be more responsible for the data. The V2 provides more freedom as the state object is now more suitable to hold transient data similar to the action objects.
@@ -67,6 +67,14 @@ The diagram shown below is there to help creating an understanding of the system
 4. When this is the case, the chosen transitioner executes its logic where it can then use the state-machine to choose the next state. 
 5. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation returned by the accepting methods will be false and no state changes are made.
 
+
+
+Here is a diagram displaying the flow horizontally:
+
+![st8-ment-V1-flow](docs\St8-ment-V1-flow.png)
+
+
+
 ### V2
 
 For V2, there are a handful of changes in regards to what was described in the V1 section.
@@ -81,6 +89,12 @@ For V2, there are a handful of changes in regards to what was described in the V
 4. The incoming action object is being verified by the ActionAccepter, to determine whether there is a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
 5. When this is the case, the chosen transitioner executes its logic by which it can then change to a next state, this makes the transition a bit easier than the V1 version as the data can now be passed from one state to another one. 
 6. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation returned by the accepting methods will be false and no state changes are made.
+
+
+
+Here is a diagram displaying the flow horizontally:
+
+![](docs\St8-ment-V2-flow.png)
 
 ## Coding Guide
 
