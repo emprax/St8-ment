@@ -3,8 +3,8 @@
     public interface IStateTransitionerProvider { }
 
     public interface IStateTransitionerProvider<TState, TContext> : IStateTransitionerProvider 
-        where TContext : IStateContext<TContext>
-        where TState : IState<TContext>
+        where TContext : class, IStateContext<TContext>
+        where TState : class, IState<TContext>
     {
         IStateTransitioner<TAction, TState, TContext> Find<TAction>() where TAction : IAction;
     }

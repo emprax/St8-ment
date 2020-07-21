@@ -14,8 +14,8 @@ namespace St8_ment.DependencyInjection.V1
 
         public ActionConfiguration(IServiceCollection services, IDictionary<int, Type> actions)
         {
-            this.services = services;
-            this.actions = actions;
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+            this.actions = actions ?? throw new ArgumentNullException(nameof(actions));
         }
 
         public void Transition<TTransitioner>() where TTransitioner : class, IStateTransitioner<StateTransaction<TAction, TState>>

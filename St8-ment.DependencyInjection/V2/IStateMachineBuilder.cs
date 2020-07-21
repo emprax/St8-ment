@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace St8_ment.DependencyInjection.V2
 {
-    public interface IStateMachineBuilder<TContext> where TContext : IStateContext<TContext>
+    public interface IStateMachineBuilder<TContext> where TContext : class, IStateContext<TContext>
     {
         IStateMachineBuilder<TContext> For<TState>(StateConfiguration<TState, TContext> configuration) where TState : class, IState<TContext>;
 

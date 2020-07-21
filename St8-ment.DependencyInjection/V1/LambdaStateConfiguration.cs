@@ -11,7 +11,7 @@ namespace St8_ment.DependencyInjection.V1
 
         public LambdaStateConfiguration(Action<IStateConfigurator<TState, TContext>> configuration)
         {
-            this.configuration = configuration;
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         protected override void Configure(IStateConfigurator<TState, TContext> configurator)

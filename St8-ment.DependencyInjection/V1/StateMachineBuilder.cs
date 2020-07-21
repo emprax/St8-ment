@@ -13,13 +13,13 @@ namespace St8_ment.DependencyInjection.V1
 
         public StateMachineBuilder(IServiceCollection services)
         {
-            this.services = services;
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
             this.states = new Dictionary<int, Func<IServiceProvider, TContext, IState<TContext>>>();
         }
 
         public IStateMachineBuilder<TContext> For<TState>(StateConfiguration<TState, TContext> configuration) where TState : class, IState<TContext>
         {
-            var result = configuration.Build(this.services);
+            var result = configuration?.Build(this.services);
             this.states.Add(typeof(TState).GetHashCode(), result);
             return this;
         }

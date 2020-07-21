@@ -3,7 +3,7 @@
 namespace St8_ment.V2
 {
     public class ActionAccepter<TContext, TState> : IActionAccepter<TContext> 
-        where TContext : IStateContext<TContext>
+        where TContext : class, IStateContext<TContext>
         where TState : IState<TContext>
     {
         private readonly IStateTransitionApplier<TState, TContext> stateTransitionApplier;

@@ -8,7 +8,7 @@ namespace St8_ment.DependencyInjection.V2
 {
     public abstract class StateConfiguration<TState, TContext> : IStateConfiguration<TState, TContext>
         where TState : class, IState<TContext>
-        where TContext : IStateContext<TContext>
+        where TContext : class, IStateContext<TContext>
     {
         protected abstract void Configure(IStateConfigurator<TState, TContext> configurator);
 
@@ -21,7 +21,7 @@ namespace St8_ment.DependencyInjection.V2
             {
                 return new StateTransitionerProvider<TState, TContext>(actions.ToDictionary(
                     actionConfiguration => actionConfiguration.Key,
-                    actionConfiguration => new Func<IStateTransitionerMarker>(() => provider.GetService(actionConfiguration.Value) as IStateTransitionerMarker)));
+                    actionConfiguration => new Func<IStateTransitionerMarker>(() => provider?.GetService(actionConfiguration.Value) as IStateTransitionerMarker)));
             });
         }
     }

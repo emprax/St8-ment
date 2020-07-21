@@ -9,7 +9,7 @@ namespace St8_ment.V1
 
         public StateMachine(IDictionary<int, Func<TContext, IState<TContext>>> registrations)
         {
-            this.registrations = registrations;
+            this.registrations = registrations ?? throw new ArgumentNullException(nameof(registrations));
         }
 
         public bool Apply<TState>(TContext context) where TState : class, IState<TContext>

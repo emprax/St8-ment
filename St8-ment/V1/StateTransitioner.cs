@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace St8_ment.V1
@@ -10,7 +11,7 @@ namespace St8_ment.V1
     {
         private readonly IStateMachine<TContext> stateMachine;
 
-        protected StateTransitioner(IStateMachine<TContext> stateMachine) => this.stateMachine = stateMachine;
+        protected StateTransitioner(IStateMachine<TContext> stateMachine) => this.stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
 
         protected abstract Task Transition(StateTransaction<TAction, TState> action, IStateMachine<TContext> stateMachine, CancellationToken cancellationToken);
 

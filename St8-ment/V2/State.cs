@@ -4,7 +4,7 @@ namespace St8_ment.V2
 {
     public abstract class State<TSelf, TContext> : IState<TContext>
         where TSelf : class, IState<TContext>
-        where TContext : IStateContext<TContext>
+        where TContext : class, IStateContext<TContext>
     {
         protected State(TContext context) => this.Context = context;
 

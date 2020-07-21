@@ -1,8 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>St8_ment.DependencyInjection</RootNamespace>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Emprax</Authors>
+    <Description>The Dependency Injection extension in regards to the St8-ment library. Provides an extension method that can be used with the Microsoft Dependency Injection library.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/emprax/St8-ment</RepositoryUrl>
+    <PackageTags>extension,state,statemachine,state-machine,redux</PackageTags>
+    <PackageIcon>St8-ment-logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +18,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\St8-ment\St8-ment.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\St8-ment-logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

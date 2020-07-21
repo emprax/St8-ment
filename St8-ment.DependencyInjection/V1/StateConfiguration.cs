@@ -20,8 +20,8 @@ namespace St8_ment.DependencyInjection.V1
             var constructor = typeof(TState)
                 .GetConstructors()
                 .FirstOrDefault(x =>
-                    x.GetParameters().Any(y => y.ParameterType == typeof(IStateTransitionerProvider)) &&
-                    x.GetParameters().Any(y => y.ParameterType == typeof(TContext)));
+                    (x?.GetParameters().Any(y => y?.ParameterType == typeof(IStateTransitionerProvider)) ?? false) &&
+                    (x?.GetParameters().Any(y => y?.ParameterType == typeof(TContext)) ?? false));
 
             return new Func<IServiceProvider, TContext, TState>((provider, context) => constructor
                 .Invoke(constructor.GetParameters().Select(x => 

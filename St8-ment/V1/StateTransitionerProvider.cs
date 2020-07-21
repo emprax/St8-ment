@@ -11,12 +11,12 @@ namespace St8_ment.V1
 
         public StateTransitionerProvider(IDictionary<int, Func<IStateTransitionerMarker>> transitionRegistrations)
         {
-            this.transitionerRegistrations = transitionRegistrations;
+            this.transitionerRegistrations = transitionRegistrations ?? throw new ArgumentNullException(nameof(transitionerRegistrations));
         }
 
         public IStateTransitioner<TTransaction> Find<TTransaction>() where TTransaction : ITransaction
         {
-            if (!this.transitionerRegistrations.TryGetValue(typeof(TTransaction).GetHashCode(), out var value) || !(value.Invoke() is IStateTransitioner<TTransaction> transition))
+            if (!this.transitionerRegistrations.TryGetValue(typeof(TTransaction).GetHashCode(), out var value) || !(value?.Invoke() is IStateTransitioner<TTransaction> transition))
             {
                 return null;
             }

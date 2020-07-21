@@ -1,6 +1,6 @@
 ﻿namespace St8_ment.V2
 {
-    public interface IStateContext<TContext> where TContext : IStateContext<TContext>
+    public interface IStateContext<TContext> where TContext : class, IStateContext<TContext>
     {
         IState<TContext> State { get; }
 

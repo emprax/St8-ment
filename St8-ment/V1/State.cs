@@ -1,18 +1,19 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace St8_ment.V1
 {
     public abstract class State<TSelf, TContext> : IState<TContext> 
-        where TContext : IStateContext<TContext>
+        where TContext : class, IStateContext<TContext>
         where TSelf : class, IState<TContext>
     {
         private readonly IStateTransitionerProvider provider;
 
         protected State(TContext context, IStateTransitionerProvider provider)
         {
-            this.Context = context;
-            this.provider = provider;
+            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            this.provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         public TContext Context { get; }
