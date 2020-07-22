@@ -6,7 +6,7 @@ NuGet package pages:
 - [St8-ment](https://www.nuget.org/packages/St8-ment/)
 - [St8-ment.DependencyInjection](https://www.nuget.org/packages/St8-ment.DependencyInjection/)
 
-##Introduction
+## Introduction
 
 A dynamic state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system (here called the transitioners) into individual components. The transitioners can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other chosen states. An action and the state-object itself are combined into a transaction which is the actual request model. There the actions are labels as well as models at the same time that contain the data for the requests.
 
