@@ -2,7 +2,7 @@
 
 namespace St8_ment.V2
 {
-    public interface IStateTransitionApplier<TState, TContext> 
+    public interface IStateTransitionerApplier<TState, TContext> 
         where TState : IState<TContext> 
         where TContext : class, IStateContext<TContext>
     {

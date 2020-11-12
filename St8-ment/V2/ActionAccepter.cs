@@ -6,9 +6,9 @@ namespace St8_ment.V2
         where TContext : class, IStateContext<TContext>
         where TState : IState<TContext>
     {
-        private readonly IStateTransitionApplier<TState, TContext> stateTransitionApplier;
+        private readonly IStateTransitionerApplier<TState, TContext> stateTransitionApplier;
 
-        public ActionAccepter(IStateTransitionApplier<TState, TContext> stateTransitionApplier)
+        public ActionAccepter(IStateTransitionerApplier<TState, TContext> stateTransitionApplier)
         {
             this.stateTransitionApplier = stateTransitionApplier;
         }

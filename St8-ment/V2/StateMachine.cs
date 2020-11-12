@@ -12,13 +12,13 @@ namespace St8_ment.V2
             this.transitionerProviders = transitionerProviders ?? throw new ArgumentNullException(nameof(transitionerProviders));
         }
 
-        public IStateTransitionApplier<TState, TContext> For<TState>(TState state) where TState : class, IState<TContext>
+        public IStateTransitionerApplier<TState, TContext> For<TState>(TState state) where TState : class, IState<TContext>
         {
-            var stateTransitionerProvider = (!this.transitionerProviders.TryGetValue(typeof(TState).GetHashCode(), out var provider) || !(provider is IStateTransitionerProvider<TState, TContext> transitionerProvider))
-                ? new EmptyStateTransitionProvider<TState, TContext>()
-                : transitionerProvider;
+            var stateTransitionerProvider = (!this.transitionerProviders.TryGetValue(typeof(TState).GetHashCode(), out var provider) || !(provider is IStateTransitionerProvider<TState, TContext> TransitionerProvider))
+                ? new EmptyStateTransitionerProvider<TState, TContext>()
+                : TransitionerProvider;
 
-            return new StateTransitionApplier<TState, TContext>(stateTransitionerProvider, state);
+            return new StateTransitionerApplier<TState, TContext>(stateTransitionerProvider, state);
         }
     }
 }

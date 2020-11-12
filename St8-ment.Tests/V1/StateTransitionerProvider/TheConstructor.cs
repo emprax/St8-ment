@@ -4,9 +4,9 @@ using Xunit;
 
 namespace St8_ment.Tests.V1.StateTransitionerProvider
 {
-    public partial class StateTransitionerProviderTests
+    public partial class StateReducerProviderTests
     {
-        public class TheConstructor : StateTransitionerProviderTests
+        public class TheConstructor : StateReducerProviderTests
         {
             [Fact]
             public void ShouldThrowArgumentNullExceptionWhenProviderIsNull()

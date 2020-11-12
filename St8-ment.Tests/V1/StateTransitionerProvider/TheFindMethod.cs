@@ -4,9 +4,9 @@ using Xunit;
 
 namespace St8_ment.Tests.V1.StateTransitionerProvider
 {
-    public partial class StateTransitionerProviderTests
+    public partial class StateReducerProviderTests
     {
-        public class TheFindMethod : StateTransitionerProviderTests
+        public class TheFindMethod : StateReducerProviderTests
         {
             [Fact]
             public void ShouldReturnNullWhenValueCannotBeFoundForKey()
@@ -26,7 +26,7 @@ namespace St8_ment.Tests.V1.StateTransitionerProvider
             }
 
             [Fact]
-            public void ShouldReturnNullWhenResultingTransitionerIsNull()
+            public void ShouldReturnNullWhenResultingReducerIsNull()
             {
                 // Arrange
                 this.transitionerRegistrations.Add(typeof(StateTransaction<TestAction, TestState>).GetHashCode(), () => null);
@@ -36,7 +36,7 @@ namespace St8_ment.Tests.V1.StateTransitionerProvider
             }
 
             [Fact]
-            public void ShouldReturnTransitioner()
+            public void ShouldReturnReducer()
             {
                 // Arrange
                 var transitioner = Mock.Of<IStateTransitioner<StateTransaction<TestAction, TestState>>>();

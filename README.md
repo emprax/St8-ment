@@ -8,9 +8,9 @@ NuGet package pages:
 
 ## Introduction
 
-A dynamic state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system (here called the transitioners) into individual components. The transitioners can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other chosen states. An action and the state-object itself are combined into a transaction which is the actual request model. There the actions are labels as well as models at the same time that contain the data for the requests.
+A dynamic state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system (here called the transitioners) into individual components. The transitioners can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other chosen states. An action and the respected state-object itself are combined into a transaction which is the actual request model. There the actions are labels as well as models at the same time. These contain the data for the requests.
 
-The library provides a V1 and V2 version. The V1 is closely modelled after the State Design Pattern, whereas the V2 version is more or less the StateMachine version of this pattern. The V2 focusses less on the behavior in the state itself. Because of this, the state does not contain specific dependencies, in contrast to the V1 version where the state contains the transitioner-provider object. The state in V1 can thus only be created by the means of deriving them from dependency injection registrations. The V2 does not place this emphasis on the state object and by this provides the possibility to use simple mapping from 1 state to another inside the provided transitioners. Conclusively this comes down at that the V1 version does not provide this possibility as the state holds the logic to determine which transitioners to use as well as that the context should at that point be more responsible for the data. The V2 provides more freedom as the state object is now more suitable to hold transient data similar to the action objects.
+The library provides a V1 and V2 version. The V1 is closely modelled after the State Design Pattern, whereas the V2 version is more or less the StateMachine version of this pattern. The V2 focusses less on the behavior in the state itself, something the V1 version does. Because of this, the state does not contain specific dependencies, in contrast to the V1 version where the state contains the transitioner-provider object. The state in V1 can thus only be created by the means of deriving them from dependency injection registrations. The V2 version does not place this emphasis on the state object and by this provides the possibility to use simple mapping from 1 state to another inside the provided transitioners. Conclusively this comes down to that the V1 version does not provide this possibility as the state holds the logic to determine which transitioners to use. Following that the context should at that point be more responsible for the data. The V2 provides more freedom as the state object is now more suitable to hold transient data similar to the action objects.
 
 ## Table of content
 
@@ -32,7 +32,7 @@ The library provides a V1 and V2 version. The V1 is closely modelled after the S
       - [V2](#v2-4)
     + [Registration and usage](#registration-and-usage)
       - [V2](#v2-5)
-  - [Usecase](#usecase)
+  - [Reasons for using this library](#reasons-for-using-this-library)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -42,7 +42,7 @@ The transitioners in this library contain the state-logic that is usually housed
 
 ![state](docs/standard-state.png)
 
-Next to that, the amount of responsibilities is increased, the abstraction for the those objects are growing as well and most configurations require the objects to communicate with one-another by the means of their concrete implementations instead of an abstraction. So altogether this pattern can cause some problems in regards to violating the SOLID design principles, although this is mostly accepted as this pattern is generally considered to be quite a well fitting solution. This library tries to solve the aforementioned issues and takes the inspiration from multiple other initiatives like, i.e., the Redux Pattern + the StateMachine Pattern. 
+Next to that, the amount of responsibilities is increased, the abstraction for the those objects are growing as well and most configurations require the objects to communicate with one-another by the means of their concrete implementations instead of an abstraction. So altogether this pattern can cause some problems in regards to violating the SOLID design principles, although this is mostly accepted as this pattern is generally considered to be quite a well fitting solution. Nevertheless, this library tries to solve the aforementioned issues and takes the inspiration from multiple other initiatives like, i.e., the Redux Pattern + the StateMachine Pattern. 
 
 ## A solution
 
@@ -50,21 +50,21 @@ As prompted before, there is a V1 version and V2 version of the code solution, b
 
 ### V1
 
-The library consists of state-machines that provide and create the state-objects for a specific context each. The state-objects refer to a provider/registry which stores all the different transitioner-objects for that state. These transitioner-objects are stored in a key-value store where the actions function as keys. When a state does contain a transitioner-object for a specific action, then that transitioner can be applied.
+The library consists of state-machines that provide and create the state-objects for each specific context. The state-objects refer to a provider/registry which stores all the different transitioner-objects for that state. These transitioner-objects are stored in a key-value store where the actions function as keys. When a state does contain a transitioner-object for a specific action, then that transitioner can be applied.
 
 ![state-machine](docs/St8-ment-state.png)
 
-**Note:** The transitioner-objects are called transitioners because of there purpose/behavior similar to transitions, but be aware that a transitioner-object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern and can therefore make a decision to transition to one state or, when a specific condition fails for example, they could determine to transition to a different states. They could even transition into none at all when no conditions are met and stay in their current states. But these choices lay in the hands of the developer that create and manage their specific transitioners.
+**Note:** *The transitioner-objects are called transitioners because of their purpose/behavior similar to transitions, but be aware that a transitioner-object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern and can therefore make a decision to transition to one state or, when a specific condition fails for example, they could determine to transition to a different states. They could even choose to not transition into a new state at all when no conditions are met and they stay in their current states. But these choices lay in the hands of the developer that create and manage their specific transitioners.*
 
 ### V2
 
-The V2 version differs from V1 in a sense that the order/hierarchy of the components referring to one another are different. Where in the V1 version the state has the foreground, there the V2 version passes that spot to the StateMachine. The context provides its state to the StateMachine by which an action accepter accepts and applies an action to a chosen transitioner. The StateMachine holds the providers for the transitioners, passes them to the action accepter and the action is again used, in combination with the state, as a transaction to find the matching transitioner. The transaction is then again used as request that is sent into that state transitioner.
+The V2 version differs from V1 in a sense that the order/hierarchy of the components referring to one-another is different. Where in the V1 version the state has the foreground, there the V2 version passes that spot to the StateMachine. The context provides its state to the StateMachine by which an action accepter accepts and applies an action to a chosen transitioner. The StateMachine holds the providers for the transitioners, passes them to the action accepter and the action is again used, in combination with the state, as a transaction to find the matching transitioner. The transaction is then again used as request that is sent into that respected state transitioner.
 
 ## How it works
 
 ### V1
 
-The diagram shown below is there to help creating an understanding of the system and it bears quite some similarity to the Redux diagram that can be found online. The numbers in the diagram refer to the described steps below. **Note:** A separate path can be taken and is determined by a condition. It is not shown as a number but will be described in the steps.
+The diagram shown below is there to help creating an understanding of the system and it bears quite some similarity to the Redux diagram that can be found online. The numbers in the diagram refer to the steps that are described below the diagram. **Note:** A separate path can be taken and is determined by a condition. It is not shown as a number but will be described in the steps.
 
 ![st8-ment](docs/St8-ment-diagram.png)
 
@@ -74,13 +74,13 @@ The diagram shown below is there to help creating an understanding of the system
 2. The action is transported to the state and accepted by the state its own accept method.
 3. The incoming action is being verified by the state, to determine whether it has a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
 4. When this is the case, the chosen transitioner executes its logic where it can then use the state-machine to choose the next state. 
-5. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation returned by the accepting methods will be false and no state changes are made.
+5. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation, returned by the accepting methods, will be false and no state changes are made.
 
 
 
 Here is a diagram displaying the flow horizontally:
 
-![st8-ment-V1-flow](docs\St8-ment-V1-flow.png)
+![st8-ment-V1-flow](docs/St8-ment-V1-flow.png)
 
 
 
@@ -96,18 +96,18 @@ For V2, there are a handful of changes in regards to what was described in the V
 2. The state is provided to the StateMachine which determines the right transitioners provider for that specific state. Be aware that the StateMachine is used like a visitor here and it visits the state by a special Connect method, from there further operations can be applied.
 3. The TransitionerProvider is being encapsulated in an ActionAccepter and an action can now be applied to it.
 4. The incoming action object is being verified by the ActionAccepter, to determine whether there is a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
-5. When this is the case, the chosen transitioner executes its logic by which it can then change to a next state, this makes the transition a bit easier than the V1 version as the data can now be passed from one state to another one. 
-6. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation returned by the accepting methods will be false and no state changes are made.
+5. When this is the case, the chosen transitioner executes its logic by which it can then change to a next state, this makes the transition a bit easier than the V1 version as the data can now be passed from one state to another. 
+6. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation, returned by the accepting methods, will be false and no state changes are made.
 
 
 
 Here is a diagram displaying the flow horizontally:
 
-![](docs\St8-ment-V2-flow.png)
+![st8-ment-V2-flow](docs/St8-ment-V2-flow.png)
 
 ## Coding Guide
 
-This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application. At first the V1 version will be discussed and then the V2 will be compared to V1 per section.
+This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application. At first the V1 version will be discussed and then the V2 will be compared to the V1 version per section.
 
 ### Context
 
@@ -259,7 +259,7 @@ This NewOrderState is an implementation of the State object. It provides its own
 
 #### V2
 
-Again, like the transitioners, the V2 version of the states are quite a bit different. The State<TSelf, TContext> abstract class is still used but is setup a bit differently. The GetSelf method is no longer needed to provide the state as the state can now be created simply by calling its constructor. In the V1 version the states had a more prominent role with dependencies and had to be registered in the DI. Next to that, the V1 state needed to provide itself to the DI construction to simply construct itself, while as with the V2 this is no longer the case.
+Again, like the transitioners, the V2 version of the states are a bit different. The State<TSelf, TContext> abstract class is still used but with a varied setup. The GetSelf method is no longer needed to provide the state as the state can now be created simply by calling its constructor. In the V1 version the states had a more prominent role with dependencies and had to be registered in the DI, while this role is no longer that prominent for version V2. Next to that, the V1 state needed to provide itself to the DI construction to simply construct itself, while as with the V2 version this is no longer the case.
 
 ```c#
 public class NewOrderState : State<NewOrderState, Order>
@@ -273,11 +273,11 @@ public class NewOrderState : State<NewOrderState, Order>
 }
 ```
 
-Nevertheless, the State abstraction still contains a Connect method, that accepts a StateMachine. The StateMachine, used here as visitor, uses the State object type setup to create the right abstraction.
+Nevertheless, the State abstraction still contains a Connect method, that accepts a StateMachine. The StateMachine, used here as visitor, uses the State object type to create the right abstraction.
 
 ### Registration and usage
 
-A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the St8-ment.DependencyInjection binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the AddStateMachine extension.
+A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the St8-ment.DependencyInjection binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the AddStateMachine extension and have therefore not a direct usage for the user/developer.
 
 ```C#
 services.AddStateMachine<Order>(builder => 
@@ -296,7 +296,7 @@ services.AddStateMachine<Order>(builder =>
 });
 ```
 
-A few things can be observed within this section. The configuration for a specific state can be created by using the For method on the builder, followed by either a lambda-expression that registers all transitioners or by a custom configuration that extends the StateConfiguration abstract class. At last, there is the option to register no configuration for a state which is necessary for assuring that the state-machine knows that state, but doesn't have any actions for it, effectively creating a sink state.
+A few things can be observed within this section. The configuration for a specific state can be created by using the For method on the builder, followed by either a lambda-expression that registers all transitioners or by a custom configuration that extends the StateConfiguration abstract class. At last, there is the option to register no configuration for a state at all. This is necessary for assuring that the state-machine knows that particular state, but doesn't have any actions for it, effectively creating a *sink* state.
 
 An example of a custom state-configuration would look like this:
 
@@ -362,12 +362,12 @@ await context.State
 await context.Apply(stateMachine, new CompleteOrderAction());
 ```
 
-First the state in the context is set to a new order (note that this could also be integration in a more intuitive way, but it depends on the choices of the developer. The simple, but still a bit specific, use of the SetState method is being shown here to illustrate an example of usage). The state in the context is being visited by the StateMachine through the Connect method of the state. The StateMachine retrieves some specific state type setup and can then retrieve the right TransitionerProvider by providing a specific ActionAccepter. The action is being applied to the accepter and the state system is set in motion. 
+First the state in the context is set to a new order (note that this could also be integration in a more intuitive way, but it depends on the choices of the developer. The simple, but still a bit specific, use of the SetState method is shown here to illustrate an example of usage). The state in the context is visited by the StateMachine through the Connect method of the state. The StateMachine retrieves some specific state type setup and can then retrieve the right TransitionerProvider by providing a specific ActionAccepter. The action is applied to the accepter and the state system is set in motion. 
 
-Note the use of a specific extension-method called *Apply*, what is an extension to the IStateContext and encapsulates the aforementioned State - StateMachine with Action interaction.
+Note the use of a specific extension-method called *Apply*, what is an extension of the IStateContext and encapsulates the aforementioned State - StateMachine with Action interaction.
 
 
 
-## Usecase
+## Reasons for using this library
 
-This library is useful for a more dynamic and solidified state pattern design. Note that the state pattern is already known for being quite a suitable design pattern in multiple solutions. Therefore this library provides even more SOLID design in state usage. The library has quite some similarities to the Redux library, but it is still its own take on the appliance of state and the patterns that are related to that. Hence this library is more or less a combination of the state pattern and state-machine pattern with some Redux influences.
+This library is useful for a more dynamic and solidified state pattern design. Note that the state pattern is already known for being quite a suitable design pattern in multiple solutions. Therefore this library provides even more SOLID design in state usage. The library has quite some similarities to the Redux library, but it is still its own take on the appliance of state and the patterns that are related to that. Hence this library is more or less a combination of the state pattern and state-machine pattern with some Redux influences. So, when wanting to use a SOLID designed state transitioning system for your software, where that is on par with front-end libraries like Redux and NGRX, then this library is a great choice.

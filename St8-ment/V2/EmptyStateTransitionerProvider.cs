@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-
-namespace St8_ment.V2
+﻿namespace St8_ment.V2
 {
-    public class EmptyStateTransitionProvider<TState, TContext> : IStateTransitionerProvider<TState, TContext>
+    public class EmptyStateTransitionerProvider<TState, TContext> : IStateTransitionerProvider<TState, TContext>
         where TState : class, IState<TContext>
         where TContext : class, IStateContext<TContext>
     {

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace St8_ment.Tests.V1.StateTransitionerProvider
 {
-    public partial class StateTransitionerProviderTests
+    public partial class StateReducerProviderTests
     {
         private readonly IDictionary<int, Func<IStateTransitionerMarker>> transitionerRegistrations;
         private readonly IStateTransitionerProvider provider;
 
-        public StateTransitionerProviderTests()
+        public StateReducerProviderTests()
         {
             this.transitionerRegistrations = new Dictionary<int, Func<IStateTransitionerMarker>>();
             this.provider = new StateTransitionerProvider<TestState, FakeContext>(this.transitionerRegistrations);
