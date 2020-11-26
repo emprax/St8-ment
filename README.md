@@ -324,18 +324,18 @@ Now, when everything is registered, the system can be used in software solutions
 
 ```c#
 var order = Order.Create(...);
-stateMachine.Apply<NewOrderState>(context);
+stateMachine.Apply<NewOrderState>(order);
 
 ......
 
 // The first state is NewOrderState which can transition into the CheckedOrderState.
-await context.Accept(new CheckOrderAction(), CancellationToken.None);	 
+await order.Accept(new CheckOrderAction(), CancellationToken.None);	 
 
 // The CheckedOrderState can transition into the DeliveredOrderState.
-await context.Accept(new DeliverOrderAction(), CancellationToken.None);
+await order.Accept(new DeliverOrderAction(), CancellationToken.None);
 
 // The DeliveredOrderState can transition into the CompletedOrderState.
-await context.Accept(new CompleteOrderAction(), CancellationToken.None);
+await order.Accept(new CompleteOrderAction(), CancellationToken.None);
 ```
 
 #### V2
@@ -349,17 +349,17 @@ order.SetState(new NewOrderState(order));
 ......
 
 // The first state is NewOrderState which can transition into the CheckedOrderState.
-await context.State
+await order.State
     .Connect(stateMachine)
     .Apply(new CheckOrderAction());
     
 // The CheckedOrderState can transition into the DeliveredOrderState.
-await context.State
+await order.State
     .Connect(stateMachine)
     .Apply(new DeliverOrderAction());
 
 // The DeliveredOrderState can transition into the CompletedOrderState. Note the use of the StateContextExtensions Apply method.
-await context.Apply(stateMachine, new CompleteOrderAction());
+await order.Apply(stateMachine, new CompleteOrderAction());
 ```
 
 First the state in the context is set to a new order (note that this could also be integration in a more intuitive way, but it depends on the choices of the developer. The simple, but still a bit specific, use of the SetState method is shown here to illustrate an example of usage). The state in the context is visited by the StateMachine through the Connect method of the state. The StateMachine retrieves some specific state type setup and can then retrieve the right TransitionerProvider by providing a specific ActionAccepter. The action is applied to the accepter and the state system is set in motion. 
