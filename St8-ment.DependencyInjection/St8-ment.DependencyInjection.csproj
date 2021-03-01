@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net50</TargetFrameworks>
     <RootNamespace>St8_ment.DependencyInjection</RootNamespace>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Emprax</Authors>
@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/emprax/St8-ment</RepositoryUrl>
     <PackageTags>extension,state,statemachine,state-machine,redux</PackageTags>
     <PackageIcon>St8-ment-logo.png</PackageIcon>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
