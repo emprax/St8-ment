@@ -1,6 +1,6 @@
 ﻿using St8_ment.States;
 
-namespace St8_ment.Tests.Units.States
+namespace St8_ment.Tests.Units.Utilities
 {
     public class TestContext : IStateContext<TestContext>
     {
@@ -8,8 +8,8 @@ namespace St8_ment.Tests.Units.States
 
         public TestContext() { }
 
-        public TestContext(IState<TestContext> state) => this.State = state;
+        public TestContext(IState<TestContext> state) => State = state;
 
-        public void SetState(IState<TestContext> state) => this.State = state;
+        public void SetState(IState<TestContext> state) => State = state;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Moq;
 using St8_ment.States;
+using St8_ment.Tests.Units.Utilities;
 using Xunit;
 
 namespace St8_ment.Tests.Units.States
@@ -63,7 +64,7 @@ namespace St8_ment.Tests.Units.States
 
             // Assert
             Assert.NotNull(context.State);
-            Assert.Equal(TestStateId.New, context.State.Id);
+            Assert.Equal(TestStateId.New, context.State.StateId);
             Assert.Equal(context, context.State.Context);
         }
     }

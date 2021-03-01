@@ -1,6 +1,6 @@
 ﻿using St8_ment.States;
 
-namespace St8_ment.Tests.Units.States
+namespace St8_ment.Tests.Units.Utilities
 {
     delegate void StateOutputCallback<TContext>(StateId id, out IActionProvider<TContext> provider) where TContext : class, IStateContext<TContext>;
 

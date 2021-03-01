@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Moq;
 using St8_ment.StateMachines;
 using St8_ment.StateMachines.Components;
-using St8_ment.Tests.Units.States;
+using St8_ment.Tests.Units.Utilities;
 using Xunit;
 
 namespace St8_ment.Tests.Units.StateMachines

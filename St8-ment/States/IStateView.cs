@@ -4,6 +4,6 @@
     {
         TContext Context { get; }
 
-        StateId Id { get; }
+        StateId StateId { get; }
     }
 }

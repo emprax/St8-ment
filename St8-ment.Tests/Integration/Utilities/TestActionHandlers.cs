@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using St8_ment.States;
 
-namespace St8_ment.Tests.Integration.States
+namespace St8_ment.Tests.Integration.Utilities
 {
     public class Test1ActionHandler : IActionHandler<Test1Action, TestContext>
     {
@@ -13,7 +12,7 @@ namespace St8_ment.Tests.Integration.States
 
         public Task<StateId> Execute(Test1Action action, IStateView<TestContext> state)
         {
-            this.logger.LogInformation("Test1-Action");
+            logger.LogInformation("Test1-Action");
             return Task.FromResult<StateId>(TestStateId.Processing);
         }
     }
@@ -26,7 +25,7 @@ namespace St8_ment.Tests.Integration.States
 
         public Task<StateId> Execute(Test2Action action, IStateView<TestContext> state)
         {
-            this.logger.LogInformation("Test2-Action");
+            logger.LogInformation("Test2-Action");
             return Task.FromResult<StateId>(TestStateId.Fault);
         }
     }
@@ -39,7 +38,7 @@ namespace St8_ment.Tests.Integration.States
 
         public Task<StateId> Execute(Test3Action action, IStateView<TestContext> state)
         {
-            this.logger.LogInformation("Test3-Action");
+            logger.LogInformation("Test3-Action");
             return Task.FromResult<StateId>(TestStateId.Complete);
         }
     }

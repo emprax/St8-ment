@@ -28,8 +28,4 @@
     <ProjectReference Include="..\St8-ment\St8-ment.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Integration\StateMachines\" />
-  </ItemGroup>
-
 </Project>

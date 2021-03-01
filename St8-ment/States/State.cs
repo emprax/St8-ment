@@ -8,35 +8,35 @@ namespace St8_ment.States
 
         public State(StateId id, TContext context, IStateReducer<TContext> reducer)
         {
-            this.Id = id;
+            this.StateId = id;
             this.Context = context;
             this.reducer = reducer;
         }
 
         public TContext Context { get; }
 
-        public StateId Id { get; }
+        public StateId StateId { get; }
 
         public async Task<StateResponse> Apply<TAction>(TAction action) where TAction : class, IAction
         {
-            if (!this.reducer.TryGetProvider(this.Id, out var provider))
+            if (!this.reducer.TryGetProvider(this.StateId, out var provider))
             {
-                return StateResponse.ToStateActionsNotFound(this.Id);
+                return StateResponse.ToStateActionsNotFound(this.StateId);
             }
 
             var actionName = typeof(TAction).Name;
             if (provider.TryGet<TAction>(out var handler))
             {
                 var stateId = await handler.Execute(action, this);
-                if (stateId.Name != this.Id.Name)
+                if (stateId.Name != this.StateId.Name)
                 {
                     this.reducer.SetState(stateId, this.Context);
                 }
 
-                return StateResponse.ToSuccess(this.Id, stateId, actionName);
+                return StateResponse.ToSuccess(this.StateId, stateId, actionName);
             }
 
-            return StateResponse.ToNoMatchingAction(this.Id, actionName);
+            return StateResponse.ToNoMatchingAction(this.StateId, actionName);
         }
     }
 }

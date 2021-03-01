@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Moq;
 using St8_ment.States;
+using St8_ment.Tests.Units.Utilities;
 using Xunit;
 
 namespace St8_ment.Tests.Units.States
@@ -89,7 +90,7 @@ namespace St8_ment.Tests.Units.States
                 .Returns(true);
 
             Mock.Get(this.handler)
-                .Setup(h => h.Execute(action, It.Is<IStateView<TestContext>>(x => x.Id == TestStateId.New && x.Context == this.context)))
+                .Setup(h => h.Execute(action, It.Is<IStateView<TestContext>>(x => x.StateId == TestStateId.New && x.Context == this.context)))
                 .ReturnsAsync(TestStateId.Processing);
 
             Mock.Get(this.reducer)

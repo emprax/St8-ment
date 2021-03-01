@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using St8_ment.DependencyInjection.States;
 using St8_ment.States;
+using St8_ment.Tests.Integration.Utilities;
 using Xunit;
 
 namespace St8_ment.Tests.Integration.States
@@ -54,7 +55,7 @@ namespace St8_ment.Tests.Integration.States
             // Assert
             Assert.Equal(StateResponse.Success.Id, result.Id);
             Assert.Equal(StateResponse.Success.Name, result.Name);
-            Assert.Equal(TestStateId.Processing.Name, context.State.Id.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
         }
 
         [Fact]
@@ -77,7 +78,7 @@ namespace St8_ment.Tests.Integration.States
             Assert.Equal(StateResponse.NoMatchingAction.Id, result2.Id);
             Assert.Equal(StateResponse.NoMatchingAction.Name, result2.Name);
 
-            Assert.Equal(TestStateId.Processing.Name, context.State.Id.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
         }
 
         [Fact]
@@ -91,13 +92,13 @@ namespace St8_ment.Tests.Integration.States
 
             // Act & Assert
             var result1 = await context.ApplyAction(new Test1Action());
-            Assert.Equal(TestStateId.Processing.Name, context.State.Id.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
 
             var result2 = await context.ApplyAction(new Test3Action());
-            Assert.Equal(TestStateId.Complete.Name, context.State.Id.Name);
+            Assert.Equal(TestStateId.Complete.Name, context.State.StateId.Name);
 
             var result3 = await context.ApplyAction(new Test2Action());
-            Assert.Equal(TestStateId.Fault.Name, context.State.Id.Name);
+            Assert.Equal(TestStateId.Fault.Name, context.State.StateId.Name);
 
             Assert.Equal(StateResponse.Success.Id, result1.Id);
             Assert.Equal(StateResponse.Success.Name, result1.Name);

@@ -1,4 +1,4 @@
-﻿namespace St8_ment.Tests.Units.States
+﻿namespace St8_ment.Tests.Integration.Utilities
 {
     public class TestStateId : StateId
     {
@@ -9,8 +9,8 @@
 
         private TestStateId(uint id, string name) : base(name)
         {
-            this.Id = id;
-            this.Name = name;
+            Id = id;
+            Name = name;
         }
 
         public uint Id { get; }

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using St8_ment.States;
 
-namespace St8_ment.Tests.Integration.States
+namespace St8_ment.Tests.Integration.Utilities
 {
     public class TestContext : IStateContext<TestContext>
     {
@@ -9,11 +9,11 @@ namespace St8_ment.Tests.Integration.States
 
         public TestContext() { }
 
-        public TestContext(IState<TestContext> state) => this.State = state;
+        public TestContext(IState<TestContext> state) => State = state;
 
-        public void SetState(IState<TestContext> state) => this.State = state;
+        public void SetState(IState<TestContext> state) => State = state;
 
         public Task<StateResponse> ApplyAction<TAction>(TAction action) where TAction : class, IAction
-            => this.State.Apply(action);
+            => State.Apply(action);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
@@ -41,7 +42,9 @@ namespace St8_ment.Tests
             this.levels[logLevel] = new KeyValuePair<uint, string[]>(item.Key + 1, messages.ToArray());
         }
 
-        public void VerifyTimes(LogLevel level, uint times) => Assert.Equal(this.levels[level].Key, times);
+        public void VerifyTimes(LogLevel level, uint times) => Assert.Equal(times, this.levels[level].Key);
+
+        public void VerifyNever() => Assert.True(this.levels.All(x => x.Value.Key == 0));
 
         public void VerifyContains(LogLevel level, string message) => Assert.Contains(message, this.levels[level].Value);
 
