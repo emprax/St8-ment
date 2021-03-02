@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;netstandard2.1;net50</TargetFrameworks>
     <RootNamespace>St8Ment</RootNamespace>
     <Authors>Emprax</Authors>
-    <Description>A library to add a dynamically SOLID version of the State Pattern and/or StateMachine Pattern. Be aware that there are a V1 and a V2 version. Both are still valid but provide each a different view on how to use the library version. V1 is more in line with the State Pattern, while V2 more with the StateMachine Pattern. See the README in the source repository for more information.</Description>
+    <Description>A library to add a flexible SOLID version of the State Pattern and/or StateMachine Pattern.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>St8-ment-logo.png</PackageIcon>
