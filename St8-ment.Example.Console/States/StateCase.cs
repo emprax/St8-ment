@@ -41,10 +41,10 @@ namespace St8Ment.Example.Console.States
 
             reducer.SetState(ExampleState.Start, context);
 
-            await context.ApplyAnAction(new StartAction("Hello"));
-            await context.ApplyAnAction(new PublishAction());
-            await context.ApplyAnAction(new RevokeAction("Reasons"));
-            await context.ApplyAnAction(new PublishAction());
+            await context.Apply(new StartAction("Hello"));
+            await context.Apply(new PublishAction());
+            await context.Apply(new RevokeAction("Reasons"));
+            await context.Apply(new PublishAction());
         }
     }
 }

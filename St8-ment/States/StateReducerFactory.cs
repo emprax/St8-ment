@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 
 namespace St8Ment.States
 {
-    public class StateReducerFactory<TKey, TContext> : IStateReducerFactory<TKey, TContext> where TContext : class, IStateContext<TContext>
+    public class StateReducerFactory<TKey, TSubject> : IStateReducerFactory<TKey, TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        private readonly ConcurrentDictionary<TKey, Func<IStateReducerCore<TContext>>> reducers;
+        private readonly ConcurrentDictionary<TKey, Func<IStateReducerCore<TSubject>>> reducers;
 
-        public StateReducerFactory(ConcurrentDictionary<TKey, Func<IStateReducerCore<TContext>>> reducers) => this.reducers = reducers;
+        public StateReducerFactory(ConcurrentDictionary<TKey, Func<IStateReducerCore<TSubject>>> reducers) => this.reducers = reducers;
 
-        public IStateReducer<TContext> Create(TKey key) => this.reducers.TryGetValue(key, out var core)
-            ? new StateReducer<TContext>(core.Invoke())
+        public IStateReducer<TSubject> Create(TKey key) => this.reducers.TryGetValue(key, out var core)
+            ? new StateReducer<TSubject>(core.Invoke())
             : null;
     }
  }

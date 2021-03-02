@@ -3,10 +3,10 @@ using St8Ment.States;
 
 namespace St8Ment.DependencyInjection.States
 {
-    public interface IStateReducerBuilder<TContext> where TContext : class, IStateContext<TContext>
+    public interface IStateReducerBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        IStateReducerBuilder<TContext> For(StateId stateId);
+        IStateReducerBuilder<TSubject> For(StateId stateId);
 
-        IStateReducerBuilder<TContext> For(StateId stateId, Action<IStateBuilder<TContext>> configuration);
+        IStateReducerBuilder<TSubject> For(StateId stateId, Action<IStateBuilder<TSubject>> configuration);
     }
 }

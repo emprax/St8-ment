@@ -1,8 +1,8 @@
 ﻿namespace St8Ment.States
 {
-    public interface IStateView<TContext> where TContext : class, IStateContext<TContext>
+    public interface IStateView<TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        TContext Context { get; }
+        TSubject Subject { get; }
 
         StateId StateId { get; }
     }

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace St8Ment.States
 {
-    public class ActionProvider<TContext> : IActionProvider<TContext> where TContext : class, IStateContext<TContext>
+    public class ActionProvider<TSubject> : IActionProvider<TSubject> where TSubject : class, IStateSubject<TSubject>
     {
         private readonly ConcurrentDictionary<string, Func<object>> handlers;
 
@@ -12,9 +12,9 @@ namespace St8Ment.States
             this.handlers = handlers;
         }
 
-        public bool TryGet<TAction>(out IActionHandler<TAction, TContext> actionHandler) where TAction : class, IAction
+        public bool TryGet<TAction>(out IActionHandler<TAction, TSubject> actionHandler) where TAction : class, IAction
         {
-            if (this.handlers.TryGetValue(typeof(TAction).FullName, out var factory) && factory?.Invoke() is IActionHandler<TAction, TContext> handler)
+            if (this.handlers.TryGetValue(typeof(TAction).FullName, out var factory) && factory?.Invoke() is IActionHandler<TAction, TSubject> handler)
             {
                 actionHandler = handler;
                 return true;

@@ -10,13 +10,13 @@ namespace St8Ment.Tests.Units.States
 {
     public class StateReducerTests
     {
-        private readonly IStateReducerCore<TestContext> core;
-        private readonly IStateReducer<TestContext> reducer;
+        private readonly IStateReducerCore<TestStateSubject> core;
+        private readonly IStateReducer<TestStateSubject> reducer;
 
         public StateReducerTests()
         {
-            this.core = Mock.Of<IStateReducerCore<TestContext>>(MockBehavior.Strict);
-            this.reducer = new StateReducer<TestContext>(this.core);
+            this.core = Mock.Of<IStateReducerCore<TestStateSubject>>(MockBehavior.Strict);
+            this.reducer = new StateReducer<TestStateSubject>(this.core);
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace St8Ment.Tests.Units.States
         {
             // Arrange
             Mock.Get(this.core)
-                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestContext>>.IsAny))
+                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
                 .Returns(false);
 
             // Act
@@ -39,10 +39,10 @@ namespace St8Ment.Tests.Units.States
         {
             // Arrange
             Mock.Get(this.core)
-                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestContext>>.IsAny))
-                .Callback(new StateOutputCallback<TestContext>((StateId _, out IActionProvider<TestContext> provider) =>
+                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
+                .Callback(new StateOutputCallback<TestStateSubject>((StateId _, out IActionProvider<TestStateSubject> provider) =>
                 {
-                    provider = Mock.Of<IActionProvider<TestContext>>();
+                    provider = Mock.Of<IActionProvider<TestStateSubject>>();
                 }))
                 .Returns(true);
 
@@ -57,7 +57,7 @@ namespace St8Ment.Tests.Units.States
         public void SetStateShouldCreateNewStateObjectWithStateProvidedProperties()
         {
             // Arrange
-            var context = new TestContext();
+            var context = new TestStateSubject();
 
             // Act
             this.reducer.SetState(TestStateId.New, context);
@@ -65,7 +65,7 @@ namespace St8Ment.Tests.Units.States
             // Assert
             Assert.NotNull(context.State);
             Assert.Equal(TestStateId.New, context.State.StateId);
-            Assert.Equal(context, context.State.Context);
+            Assert.Equal(context, context.State.Subject);
         }
     }
 }

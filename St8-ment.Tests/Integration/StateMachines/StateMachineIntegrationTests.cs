@@ -12,15 +12,15 @@ namespace St8Ment.Tests.Integration.StateMachines
     public class StateMachineIntegrationTests
     {
         private readonly IServiceProvider provider;
-        private readonly LoggerMock<TestContext> logger;
+        private readonly LoggerMock<TesTSubject> logger;
 
         public StateMachineIntegrationTests()
         {
-            this.logger = new LoggerMock<TestContext>();
+            this.logger = new LoggerMock<TesTSubject>();
 
             this.provider = new ServiceCollection()
                 .AddTransient<Test2Callback>()
-                .AddTransient<ILogger<TestContext>>(_ => this.logger)
+                .AddTransient<ILogger<TesTSubject>>(_ => this.logger)
                 .AddStateMachine((builder, p) =>
                 {
                     builder

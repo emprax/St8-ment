@@ -6,9 +6,9 @@ namespace St8Ment.Tests.Integration.Utilities
 {
     public class Test1Callback : ITransitionCallback<Test1Action>
     {
-        private readonly ILogger<TestContext> logger;
+        private readonly ILogger<TesTSubject> logger;
 
-        public Test1Callback(ILogger<TestContext> logger) => this.logger = logger;
+        public Test1Callback(ILogger<TesTSubject> logger) => this.logger = logger;
 
         public Task Execute(Test1Action action)
         {
@@ -19,9 +19,9 @@ namespace St8Ment.Tests.Integration.Utilities
 
     public class Test2Callback : ITransitionCallback<Test2Action>
     {
-        private readonly ILogger<TestContext> logger;
+        private readonly ILogger<TesTSubject> logger;
 
-        public Test2Callback(ILogger<TestContext> logger) => this.logger = logger;
+        public Test2Callback(ILogger<TesTSubject> logger) => this.logger = logger;
 
         public Task Execute(Test2Action action)
         {
@@ -32,9 +32,9 @@ namespace St8Ment.Tests.Integration.Utilities
 
     public class Test3Callback : ITransitionCallback<Test3Action>
     {
-        private readonly ILogger<TestContext> logger;
+        private readonly ILogger<TesTSubject> logger;
 
-        public Test3Callback(ILogger<TestContext> logger) => this.logger = logger;
+        public Test3Callback(ILogger<TesTSubject> logger) => this.logger = logger;
 
         public Task Execute(Test3Action action)
         {

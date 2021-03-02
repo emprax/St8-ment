@@ -11,8 +11,8 @@ namespace St8Ment.Tests.Units.States
     public class ActionProviderTests
     {
         private readonly ConcurrentDictionary<string, Func<object>> handlers;
-        private readonly IActionHandler<TestAction, TestContext> handler;
-        private readonly IActionProvider<TestContext> actionProvider;
+        private readonly IActionHandler<TestAction, TestStateSubject> handler;
+        private readonly IActionProvider<TestStateSubject> actionProvider;
 
         public class NoneExistingAction : IAction { }
 
@@ -24,7 +24,7 @@ namespace St8Ment.Tests.Units.States
 
         public ActionProviderTests()
         {
-            this.handler = Mock.Of<IActionHandler<TestAction, TestContext>>(MockBehavior.Strict);
+            this.handler = Mock.Of<IActionHandler<TestAction, TestStateSubject>>(MockBehavior.Strict);
             this.handlers = new ConcurrentDictionary<string, Func<object>>(new[]
             {
                 new KeyValuePair<string, Func<object>>(typeof(TestAction).FullName, () => this.handler),
@@ -33,7 +33,7 @@ namespace St8Ment.Tests.Units.States
                 new KeyValuePair<string, Func<object>>(typeof(OtherAction).FullName, () => "hello")
             });
 
-            this.actionProvider = new ActionProvider<TestContext>(this.handlers);
+            this.actionProvider = new ActionProvider<TestStateSubject>(this.handlers);
         }
 
         [Fact]

@@ -8,7 +8,7 @@ NuGet package pages:
 
 ## Introduction
 
-A more flexible state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system into individual components. These transitions can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other states.
+A more flexible state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system into individual components. These transitions can be viewed as **request-handlers** in a request-to-handler model (like modern library such as **MediatR**). They respond to the input of an action and determine how a state transitions into other states.
 
 Previously, the library provided a V1 and V2 version. However, because of some new insights into the matter, the whole library has gained an total overhaul. Use a version before 2.0.0 to use of the previous setup. The [documentation](./docs/README(old).md) regarding that setup has been relocated to the /docs section.
 
@@ -40,7 +40,7 @@ This version of the documentation will concern the overhauled version of the St8
 
 ## The problem
 
-The transitioners in this library contain the state-logic that is usually housed in the state-object itself, when regarding the standard state pattern. But these type of states in the official state pattern are confined to the amount of methods that state object contains. The state in this case usually contains the same methods as the state context. So extending the amount of operations that require state specific transitions can only be achieved by modifying the class-structure of both the state and the context. 
+In the original state-pattern, the state objects (polymorphic implementations of a common state interface) contain the logic for state-transitions but also provide the same interface (in regards of methods/actions) as its subject (sometimes called context). This means that when the subject changes its interface (class-structure), the state objects also have to be refactored. Furthermore, the state objects themselves also determine into which state they transition next when a certain action is applied. All this logic is fairly simple to apply and provides robust state guarding and transitioning. However, the extendibility and hardcoded logic both make it difficult to change certain aspects without re-implementing the whole state-object (or state-objects when the subject changes).
 
 ![state](docs/standard-state.png)
 
@@ -48,64 +48,70 @@ Next to that, the amount of responsibilities is increased, the abstraction for t
 
 ## A solution
 
-As prompted before, there is a V1 version and V2 version of the code solution, both with their own ideas that lead to their respective designs.
+This library provides a proposed solution for the aforementioned problem. St8-ment provides to state-based pattern implementations, **state** and **state-machine**. The state version is a direct solution to aforementioned the state-pattern, whereas the state-machine pattern is a dedicated state-machine implementation. Both are designed with modern technology in mind and comes with **dependency injection** extensions for *Microsoft ServiceCollection*. 
 
-### V1
+The implementations are based on modern **request + request-handler** style solutions with makes it easier to use dependencies.
 
-The library consists of state-machines that provide and create the state-objects for each specific context. The state-objects refer to a provider/registry which stores all the different transitioner-objects for that state. These transitioner-objects are stored in a key-value store where the actions function as keys. When a state does contain a transitioner-object for a specific action, then that transitioner can be applied.
+### State
 
-![state-machine](docs/St8-ment-state.png)
+The state-pattern based solution in this library uses a so-called state-reducer to create new states regarding a state-id and the subject/context. The state-objects refer to the reducer to get their corresponding action-providers which provides the action-handlers for a particular action that are registered on the respected state. These resulting action-handler objects are stored in key-value stores within the state-specific action-providers where the actions function as keys. When a state does contain an action-handler for a specific action, then that actions can be applied a possible transition into a new state could occur (that dependents on what the developer of that particular action-handler has in mind).
 
-**Note:** *The transitioner-objects are called transitioners because of their purpose/behavior similar to transitions, but be aware that a transitioner-object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern and can therefore make a decision to transition to one state or, when a specific condition fails for example, they could determine to transition to a different states. They could even choose to not transition into a new state at all when no conditions are met and they stay in their current states. But these choices lay in the hands of the developer that create and manage their specific transitioners.*
+The actions (and corresponding actions-handlers) can be registered to a particular state by the means of the aforementioned dependency injection extensions.
 
-### V2
+**NOTE:** What is displayed in figure below is the belonging-to-hierarchy. The actual flow works a bit different and will be explain further down below in the section about the workings of the library components.
 
-The V2 version differs from V1 in a sense that the order/hierarchy of the components referring to one-another is different. Where in the V1 version the state has the foreground, there the V2 version passes that spot to the StateMachine. The context provides its state to the StateMachine by which an action accepter accepts and applies an action to a chosen transitioner. The StateMachine holds the providers for the transitioners, passes them to the action accepter and the action is again used, in combination with the state, as a transaction to find the matching transitioner. The transaction is then again used as request that is sent into that respected state transitioner.
+<img src="docs/St8-ment-state.png" alt="st8-ment" width ="700" height="500" />
+
+**NOTE:** Be aware that an action-handler object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern. Therefore they can make a decision to transition into a specific state or, when a specific condition fails for example, they could determine to transition into a different states. They could even choose to not transition into another state at all when no conditions are met. The subject/context will then stay in its current state. But these choices lay in the hands of the developers that create and manage their specific action-handlers.*
+
+### State-machine
+
+The state-machine version in this library is setup differently in respect to the state-based version. The state-machine version provides a transitions into new states controlled by the type of input that is provided to the state-machine. Every transition can have its own guard (specification by **SpeciFire** library) and transition-callback, which are both completely optional but are recommended nonetheless. Every state has its own set of inputs it can react to, these can be registered to the state-machine by the aforementioned dependency injection extensions.
+
+One specific difference in regards to the state-based version is that the transitions in the state-machine are predefined regarding into which new state the machine transitions. 
+
+**NOTE:** *When a callback is execute and throws an exception, then this exception will be caught and provided in a specific result, however, the transition into the targeted state will no longer occur at that moment.*
 
 ## How it works
 
-### V1
+### State
 
-The diagram shown below is there to help creating an understanding of the system and it bears quite some similarity to the Redux diagram that can be found online. The numbers in the diagram refer to the steps that are described below the diagram. **Note:** A separate path can be taken and is determined by a condition. It is not shown as a number but will be described in the steps.
+The diagram shown below is there to help creating an understanding of the system and it bears quite some similarity to the Redux diagram that can be found online. The numbers in the diagram refer to the steps that are described below the diagram. 
 
-![st8-ment](docs/St8-ment-diagram.png)
-
-**Steps:**
-
-1. The context (in most cases an aggregate-root) contains the state and an accept method that accepts an action. 
-2. The action is transported to the state and accepted by the state its own accept method.
-3. The incoming action is being verified by the state, to determine whether it has a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
-4. When this is the case, the chosen transitioner executes its logic where it can then use the state-machine to choose the next state. 
-5. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation, returned by the accepting methods, will be false and no state changes are made.
-
-
-
-Here is a diagram displaying the flow horizontally:
-
-![st8-ment-V1-flow](docs/St8-ment-V1-flow.png)
-
-
-
-### V2
-
-For V2, there are a handful of changes in regards to what was described in the V1 section.
-
-<img src="docs/St8-ment-diagram-V2.png" alt="st8-ment" style="zoom:47%;" />
+<img src="docs/St8-ment-diagram-state.png" alt="st8-ment" width ="700" height="770" />
 
 **Steps:**
 
-1. The context (again, in most cases an aggregate-root) contains the state.
-2. The state is provided to the StateMachine which determines the right transitioners provider for that specific state. Be aware that the StateMachine is used like a visitor here and it visits the state by a special Connect method, from there further operations can be applied.
-3. The TransitionerProvider is being encapsulated in an ActionAccepter and an action can now be applied to it.
-4. The incoming action object is being verified by the ActionAccepter, to determine whether there is a transitioner related to that action. This verification is achieved by determining whether the TransitionerProvider actually contains a transitioner for this action.
-5. When this is the case, the chosen transitioner executes its logic by which it can then change to a next state, this makes the transition a bit easier than the V1 version as the data can now be passed from one state to another. 
-6. The state is eventually set to the context and the cycle is complete. But when the transitioner cannot be found, a boolean determining the success of the state transition operation, returned by the accepting methods, will be false and no state changes are made.
+1. The context (in most cases a data-model, system or an aggregate-root (DDD)) can hold a state and has an *AcceptAction(...)* method that accepts an action. 
+2. The action is transmitted it to the state accepted through its own *Accept* method.
+3. The incoming action is being verified by the state, to determine whether it has an action-handler for it. This verification is achieved by determining whether the action-provider (retrieved from the state-reducer) actually contains an action-handler for this action. **NOTE:** The action-providers are stored in a special storage core in the reducer per state-id, so when a state wants to consult its corresponding action-handler, it should do so by querying the state-reducer. However, it could be the case that there is no action-handler for the respected state, hence a special state-response is returned to notify the caller of the accept method. A same sort of process will occur when an action cannot be mapped to a corresponding action-handler from the retrieved action-provider.
+4. When the action-handler is successfully retrieved, it will be prompted to execute its logic regarding the provided action together with a state-view that contains the current state-id and the context. When the process succeeds, the state will then again consult the state-reducer by calling its *SetState(...)* method. This method needs both the target state-id and the subject/context.
+5. The state is then set to the context and the cycle is complete. **NOTE:** When initializing the subject/context, it is a good idea to call the state-reducer (typed for that context) and utilize the *SetState* method to setup the context with an initial state.
 
+### State-machine
 
+Again a Redux-diagram-like diagram is used to visualize the steps for the state-machine based solution.
 
-Here is a diagram displaying the flow horizontally:
+<img src="docs/St8-ment-diagram-state-machine.png" alt="st8-ment" width ="615" height="800" />
 
-![st8-ment-V2-flow](docs/St8-ment-V2-flow.png)
+**Steps:**
+
+1. An input applied to the state-machine.
+
+2. The state-machine determines whether it has registered state transitions that adhere to the type of the input in combination with the current state.
+
+3. When the corresponding transition is found, a few actions can be applied in order (otherwise see step **3.A.**):
+
+   - (Optional) When there is a specification (implementation with a ISpec<T> from the **SpeciFire** library) as guard available, it will be called to check whether the input adheres to the specification. When the input does not adhere to the specification, this step will return a not-satisfied response, further actions after this case will be discussed in section **3.A**. 
+     - When there is no guard available, this step will be skipped.
+   - (Optional) When there a transition-callback available, it will be called to execute the callback operation. When the callback throws an exception, then this exception will be caught and this step will return an exception-response, further actions after this case will be discussed in section **3.A**. 
+     - When there is no transition-callback available, this step will be skipped.
+   - The final step in this block is to return a new state-id (the ID of the state that it should transition into).
+
+   **A. Important:** When the registration of the state is provided with a default case, the failed steps, mentioned directly above, will at least return to the state component which will try to execute the default transition. This is a convenient feature for tidying up the failed cases. For example, by always transitioning into a fault-state when a failure occurs.
+
+4. The retrieved state (ID) will be returned to the state-machine.
+5. The state-machine will update its state by setting the new state-id.
 
 ## Coding Guide
 
@@ -113,23 +119,24 @@ This section emphasizes the important components of the library on behalf of som
 
 ### Context
 
-The context contains the state. It uses the state to determine which actions are allowed and how to transition to another state, by the means of the transitioners, when a certain action is being issued. 
+#### State
+
+The context contains the state, although, it is not explicitly required by the interface. The reason for this is that the state is not directly available by default, it has to be set by the state-reducer by means of the *SetState(...)* method. The context delegates the determination of which actions are allow on current state of the context to the state itself, but also to transition into another state when specified.
 
 ```c#
 public class Order : IAggregateRoot, IStateContext<Order>
 {
     public IState<Order> State { get; private set; }
     
-    public Task<bool> Accept<TAction>(TAction action, CancellationToken cancellationToken) where TAction : IAction
+    public Task<bool> AcceptAction<TAction>(TAction action) where TAction : class, IAction
     {
         //...........
-        return State.Accept(action, cancellationToken);
+        return State.Accept(action);
     }
     
-    public void SetState<TState>(TState state) where TState : class, IState<ExampleContext>
+    public void SetState(IState<Order> state)
     {
-        //...........
-     	this.State = state;   
+     	this.State = state;
     }
     
     //...........
@@ -137,27 +144,6 @@ public class Order : IAggregateRoot, IStateContext<Order>
 ```
 
 The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateContext<TContext> interface.
-
-#### V2
-
-The V2 version of the context is nearly the same, but differs in a specific detail. The Accept method is removed in this version as the context purely contains the state and the state is no longer the main command-center. The state is now more similar to a status + data containing object that can be used in combination with an action to form a transaction to a transitioner.
-
-```c#
-public class Order : IAggregateRoot, IStateContext<Order>
-{
-    public IState<Order> State { get; private set; }
-    
-    public void SetState<TState>(TState state) where TState : class, IState<ExampleContext>
-    {
-        //...........
-     	this.State = state;   
-    }
-    
-    //...........
-}
-```
-
-
 
 ### Transitioners
 

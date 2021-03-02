@@ -10,19 +10,19 @@ namespace St8Ment.Tests.Units.States
 {
     public class StateReducerFactoryTests
     {
-        private readonly ConcurrentDictionary<string, Func<IStateReducerCore<TestContext>>> reducers;
-        private readonly IStateReducerCore<TestContext> reducer;
-        private readonly IStateReducerFactory<string, TestContext> factory;
+        private readonly ConcurrentDictionary<string, Func<IStateReducerCore<TestStateSubject>>> reducers;
+        private readonly IStateReducerCore<TestStateSubject> reducer;
+        private readonly IStateReducerFactory<string, TestStateSubject> factory;
 
         public StateReducerFactoryTests()
         {
-            this.reducer = Mock.Of<IStateReducerCore<TestContext>>(MockBehavior.Strict);
-            this.reducers = new ConcurrentDictionary<string, Func<IStateReducerCore<TestContext>>>(new[]
+            this.reducer = Mock.Of<IStateReducerCore<TestStateSubject>>(MockBehavior.Strict);
+            this.reducers = new ConcurrentDictionary<string, Func<IStateReducerCore<TestStateSubject>>>(new[]
             {
-                new KeyValuePair<string, Func<IStateReducerCore<TestContext>>>("TEST", () => this.reducer)
+                new KeyValuePair<string, Func<IStateReducerCore<TestStateSubject>>>("TEST", () => this.reducer)
             });
 
-            this.factory = new StateReducerFactory<string, TestContext>(this.reducers);
+            this.factory = new StateReducerFactory<string, TestStateSubject>(this.reducers);
         }
 
         [Fact]

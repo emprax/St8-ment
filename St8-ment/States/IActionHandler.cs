@@ -2,10 +2,10 @@
 
 namespace St8Ment.States
 {
-    public interface IActionHandler<TAction, TContext>
-        where TContext : class, IStateContext<TContext>
+    public interface IActionHandler<TAction, TSubject>
+        where TSubject : class, IStateSubject<TSubject>
         where TAction : class, IAction
     {
-        Task<StateId> Execute(TAction action, IStateView<TContext> state);
+        Task<StateId> Execute(TAction action, IStateView<TSubject> state);
     }
 }

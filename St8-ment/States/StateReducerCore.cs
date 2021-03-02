@@ -2,13 +2,13 @@
 
 namespace St8Ment.States
 {
-    public class StateReducerCore<TContext> : IStateReducerCore<TContext> where TContext : class, IStateContext<TContext>
+    public class StateReducerCore<TSubject> : IStateReducerCore<TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        private readonly ConcurrentDictionary<StateId, IActionProvider<TContext>> states;
+        private readonly ConcurrentDictionary<StateId, IActionProvider<TSubject>> states;
 
-        public StateReducerCore(ConcurrentDictionary<StateId, IActionProvider<TContext>> states) => this.states = states;
+        public StateReducerCore(ConcurrentDictionary<StateId, IActionProvider<TSubject>> states) => this.states = states;
 
-        public bool TryGet(StateId stateId, out IActionProvider<TContext> actionProvider)
+        public bool TryGet(StateId stateId, out IActionProvider<TSubject> actionProvider)
         {
             if (this.states.TryGetValue(stateId, out var provider))
             {

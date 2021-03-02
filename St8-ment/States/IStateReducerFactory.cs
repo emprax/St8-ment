@@ -1,7 +1,7 @@
 ﻿namespace St8Ment.States
 {
-    public interface IStateReducerFactory<TKey, TContext> where TContext : class, IStateContext<TContext>
+    public interface IStateReducerFactory<TKey, TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        IStateReducer<TContext> Create(TKey key);
+        IStateReducer<TSubject> Create(TKey key);
     }
 }

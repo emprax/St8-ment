@@ -5,20 +5,20 @@ using St8Ment.States;
 
 namespace St8Ment.DependencyInjection.States
 {
-    internal class ActionBuilder<TAction, TContext> : IActionBuilder<TAction, TContext>
+    internal class ActionBuilder<TAction, TSubject> : IActionBuilder<TAction, TSubject>
         where TAction : class, IAction
-        where TContext : class, IStateContext<TContext>
+        where TSubject : class, IStateSubject<TSubject>
     {
         private readonly ConcurrentDictionary<string, Func<IServiceProvider, object>> actions;
-        private readonly IStateBuilder<TContext> builder;
+        private readonly IStateBuilder<TSubject> builder;
 
-        internal ActionBuilder(ConcurrentDictionary<string, Func<IServiceProvider, object>> actions, IStateBuilder<TContext> builder)
+        internal ActionBuilder(ConcurrentDictionary<string, Func<IServiceProvider, object>> actions, IStateBuilder<TSubject> builder)
         {
             this.actions = actions;
             this.builder = builder;
         }
 
-        public IStateBuilder<TContext> Handle<THandler>() where THandler : class, IActionHandler<TAction, TContext>
+        public IStateBuilder<TSubject> Handle<THandler>() where THandler : class, IActionHandler<TAction, TSubject>
         {
             var key = typeof(TAction).FullName;
             var factory = new Func<IServiceProvider, object>(provider =>

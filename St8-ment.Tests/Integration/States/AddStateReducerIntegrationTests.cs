@@ -16,8 +16,8 @@ namespace St8Ment.Tests.Integration.States
         public AddStateReducerIntegrationTests()
         {
             this.provider = new ServiceCollection()
-                .AddSingleton<ILogger<TestContext>, LoggerMock<TestContext>>()
-                .AddStateReducer<TestContext>((builder, _) => 
+                .AddSingleton<ILogger<TesTSubject>, LoggerMock<TesTSubject>>()
+                .AddStateReducer<TesTSubject>((builder, _) => 
                 {
                     builder
                         .For(TestStateId.Fault)
@@ -44,13 +44,13 @@ namespace St8Ment.Tests.Integration.States
         public async Task ShouldApplyTest1ActionAndResultInStateProcessing()
         {
             // Arrange
-            var context = new TestContext();
-            var reducer = this.provider.GetRequiredService<IStateReducer<TestContext>>();
+            var context = new TesTSubject();
+            var reducer = this.provider.GetRequiredService<IStateReducer<TesTSubject>>();
 
             reducer.SetState(TestStateId.New, context);
 
             // Act
-            var result = await context.ApplyAction(new Test1Action());
+            var result = await context.Apply(new Test1Action());
 
             // Assert
             Assert.Equal(StateResponse.Success.Id, result.Id);
@@ -62,14 +62,14 @@ namespace St8Ment.Tests.Integration.States
         public async Task ShouldReturnNoMatchingActionResultWhenActionIsNotAvailableForState()
         {
             // Arrange
-            var context = new TestContext();
-            var reducer = this.provider.GetRequiredService<IStateReducer<TestContext>>();
+            var context = new TesTSubject();
+            var reducer = this.provider.GetRequiredService<IStateReducer<TesTSubject>>();
 
             reducer.SetState(TestStateId.New, context);
 
             // Act
-            var result1 = await context.ApplyAction(new Test1Action());
-            var result2 = await context.ApplyAction(new Test1Action());
+            var result1 = await context.Apply(new Test1Action());
+            var result2 = await context.Apply(new Test1Action());
 
             // Assert
             Assert.Equal(StateResponse.Success.Id, result1.Id);
@@ -85,19 +85,19 @@ namespace St8Ment.Tests.Integration.States
         public async Task ShouldTransitionIntoMultipleStates()
         {
             // Arrange
-            var context = new TestContext();
-            var reducer = this.provider.GetRequiredService<IStateReducer<TestContext>>();
+            var context = new TesTSubject();
+            var reducer = this.provider.GetRequiredService<IStateReducer<TesTSubject>>();
 
             reducer.SetState(TestStateId.New, context);
 
             // Act & Assert
-            var result1 = await context.ApplyAction(new Test1Action());
+            var result1 = await context.Apply(new Test1Action());
             Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
 
-            var result2 = await context.ApplyAction(new Test3Action());
+            var result2 = await context.Apply(new Test3Action());
             Assert.Equal(TestStateId.Complete.Name, context.State.StateId.Name);
 
-            var result3 = await context.ApplyAction(new Test2Action());
+            var result3 = await context.Apply(new Test2Action());
             Assert.Equal(TestStateId.Fault.Name, context.State.StateId.Name);
 
             Assert.Equal(StateResponse.Success.Id, result1.Id);

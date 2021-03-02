@@ -9,12 +9,9 @@
 
         private TestStateId(uint id, string name) : base(name)
         {
-            Id = id;
-            Name = name;
+            this.Id = id;
         }
 
         public uint Id { get; }
-
-        public string Name { get; }
     }
 }

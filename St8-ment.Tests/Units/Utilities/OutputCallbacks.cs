@@ -2,9 +2,9 @@
 
 namespace St8Ment.Tests.Units.Utilities
 {
-    delegate void StateOutputCallback<TContext>(StateId id, out IActionProvider<TContext> provider) where TContext : class, IStateContext<TContext>;
+    delegate void StateOutputCallback<TSubject>(StateId id, out IActionProvider<TSubject> provider) where TSubject : class, IStateSubject<TSubject>;
 
-    delegate void ActionOutputCallback<TAction, TContext>(out IActionHandler<TAction, TContext> handler)
+    delegate void ActionOutputCallback<TAction, TSubject>(out IActionHandler<TAction, TSubject> handler)
         where TAction : class, IAction
-        where TContext : class, IStateContext<TContext>;
+        where TSubject : class, IStateSubject<TSubject>;
 }

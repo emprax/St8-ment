@@ -2,18 +2,18 @@
 
 namespace St8Ment.States
 {
-    public class State<TContext> : IState<TContext> where TContext : class, IStateContext<TContext>
+    public class State<TSubject> : IState<TSubject> where TSubject : class, IStateSubject<TSubject>
     {
-        private readonly IStateReducer<TContext> reducer;
+        private readonly IStateReducer<TSubject> reducer;
 
-        public State(StateId id, TContext context, IStateReducer<TContext> reducer)
+        public State(StateId id, TSubject subject, IStateReducer<TSubject> reducer)
         {
             this.StateId = id;
-            this.Context = context;
+            this.Subject = subject;
             this.reducer = reducer;
         }
 
-        public TContext Context { get; }
+        public TSubject Subject { get; }
 
         public StateId StateId { get; }
 
@@ -30,7 +30,7 @@ namespace St8Ment.States
                 var stateId = await handler.Execute(action, this);
                 if (stateId.Name != this.StateId.Name)
                 {
-                    this.reducer.SetState(stateId, this.Context);
+                    this.reducer.SetState(stateId, this.Subject);
                 }
 
                 return StateResponse.ToSuccess(this.StateId, stateId, actionName);
