@@ -23,19 +23,19 @@ This version of the documentation will concern the overhauled version of the **S
     + [State](#state)
     + [State-machine](#state-machine)
   * [How it works](#how-it-works)
-    + [State workings](#state workings)
-    + [State-machine workings](#state-machine workings)
+    + [State workings](#state-workings)
+    + [State-machine workings](#state-machine-workings)
   * [Coding Guide](#coding-guide)
-    + [State coding](#state coding)
+    + [State coding](#state-coding)
       - [Subject](#subject)
       - [Action-Handlers](#action-handlers)
       - [Actions](#actions)
       - [States](#states)
-      - [State-reducer registration and usage](#state-reducer registration and usage)
-    + [State-machine coding](#state-machine coding)
+      - [State-reducer registration and usage](#state-reducer-registration-and-usage)
+    + [State-machine coding](#state-machine-coding)
       - [Guards](#guards)
       - [Transition-callbacks](#transition-callbacks)
-      + [State-machine registration and usage](#state-machine registration and usage)
+      + [State-machine registration and usage](#state-machine-registration-and-usage)
   - [Reasons for using this library](#reasons-for-using-this-library)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -293,7 +293,7 @@ public class OrderRepository
     
     public async Task<Order> GetAsync(OrderNumber number)
     {
-		var entity = await this.context
+	var entity = await this.context
             .Set<OrderEntity>()
             .SingleOrDefault(o => o.Number == number);	// Entity Framework implementation.
         
