@@ -1,15 +1,20 @@
-﻿using St8_ment.Example.Console.V1;
-using St8_ment.Example.Console.V2;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using St8Ment.Example.Console.StateMachines;
+using St8Ment.Example.Console.States;
 
-namespace St8_ment.Example.Console
+namespace St8Ment.Example.Console
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task Main(string[] _)
         {
-            await CaseV1.Execute();
-            await CaseV2.Execute();
+            await StateMachineCase.Execute();
+
+            System.Console.WriteLine();
+            System.Console.WriteLine();
+            System.Console.WriteLine();
+
+            await StateCase.Execute();
         }
     }
 }
