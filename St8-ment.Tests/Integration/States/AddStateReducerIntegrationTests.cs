@@ -21,11 +21,7 @@ namespace St8Ment.Tests.Integration.States
                 {
                     builder
                         .For(TestStateId.Fault)
-                        .For(TestStateId.New, bldr => 
-                        {
-                            bldr.On<Test1Action>().Handle<Test1ActionHandler>()
-                                .On<Test2Action>().Handle<Test2ActionHandler>();
-                        })
+                        .For(new NewStateConfiguration())
                         .For(TestStateId.Processing, bldr => 
                         {
                             bldr.On<Test3Action>().Handle<Test3ActionHandler>()
@@ -38,6 +34,18 @@ namespace St8Ment.Tests.Integration.States
                         });
                 })
                 .BuildServiceProvider();
+        }
+
+        public class NewStateConfiguration : IStateConfiguration<TesTSubject>
+        {
+            public StateId StateId => TestStateId.New;
+
+            public void Configure(IStateBuilder<TesTSubject> builder)
+            {
+                builder
+                    .On<Test1Action>().Handle<Test1ActionHandler>()
+                    .On<Test2Action>().Handle<Test2ActionHandler>();
+            }
         }
 
         [Fact]

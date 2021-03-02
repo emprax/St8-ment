@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/emprax/St8-ment</RepositoryUrl>
     <PackageTags>extension,state,statemachine,state-machine,redux</PackageTags>
     <PackageIcon>St8-ment-logo.png</PackageIcon>
-    <Version>1.0.2</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

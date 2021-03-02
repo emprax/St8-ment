@@ -8,5 +8,7 @@ namespace St8Ment.DependencyInjection.States
         IStateReducerBuilder<TSubject> For(StateId stateId);
 
         IStateReducerBuilder<TSubject> For(StateId stateId, Action<IStateBuilder<TSubject>> configuration);
+
+        IStateReducerBuilder<TSubject> For(IStateConfiguration<TSubject> configuration);
     }
 }

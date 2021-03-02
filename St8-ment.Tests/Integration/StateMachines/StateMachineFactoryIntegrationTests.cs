@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using St8Ment.DependencyInjection.StateMachines;
+using St8Ment.DependencyInjection.StateMachines.Builders;
 using St8Ment.StateMachines;
 using St8Ment.Tests.Integration.Utilities;
 using Xunit;
@@ -26,11 +27,7 @@ namespace St8Ment.Tests.Integration.StateMachines
                         .AddStateMachine("TEST1", buildr => 
                         {
                             buildr
-                                .ForInitial(TestStateId.New, bldr =>
-                                {
-                                    bldr.On<Test1Action>().To(TestStateId.Complete)
-                                        .On<Test2Action>().WithCallback<Test2Callback>().To(TestStateId.Processing);
-                                })
+                                .ForInitial(new InitialStateConfiguration())
                                 .For(TestStateId.Processing, bldr =>
                                 {
                                     bldr.On<Test3Action>().To(TestStateId.New)
@@ -45,14 +42,34 @@ namespace St8Ment.Tests.Integration.StateMachines
                                     bldr.On<Test1Action>().WithCallback<Test1Callback>().To(TestStateId.Complete)
                                         .On<Test2Action>().WithCallback<Test2Callback>().To(TestStateId.Processing);
                                 })
-                                .For(TestStateId.Processing, bldr =>
-                                {
-                                    bldr.On<Test3Action>().To(TestStateId.New)
-                                        .OnDefault().To(TestStateId.Fault);
-                                });
+                                .For(new ProcessingStateConfiguration());
                         });
                 })
                 .BuildServiceProvider();
+        }
+
+        public class InitialStateConfiguration : IStateConfiguration
+        {
+            public StateId StateId => TestStateId.New;
+
+            public void Configure(IStateComponentBuilder builder)
+            {
+                builder
+                    .On<Test1Action>().To(TestStateId.Complete)
+                    .On<Test2Action>().WithCallback<Test2Callback>().To(TestStateId.Processing);
+            }
+        }
+
+        public class ProcessingStateConfiguration : IStateConfiguration
+        {
+            public StateId StateId => TestStateId.Processing;
+
+            public void Configure(IStateComponentBuilder builder)
+            {
+                builder
+                    .On<Test3Action>().To(TestStateId.New)
+                    .OnDefault().To(TestStateId.Fault);
+            }
         }
 
         [Fact]

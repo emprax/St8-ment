@@ -22,6 +22,17 @@ namespace St8Ment.DependencyInjection.StateMachines.Builders
             return this;
         }
 
+        public IStateComponentCollectionBuilder For(IStateConfiguration configuration)
+        {
+            if (configuration != null)
+            {
+                var component = this.GetOrAdd(configuration.StateId);
+                configuration.Configure(new StateComponentBuilder(component, this.provider));
+            }
+
+            return this;
+        }
+
         private StateComponent GetOrAdd(StateId id)
         {
             if (!this.parent.TryGetValue(id, out var component))

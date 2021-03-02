@@ -28,6 +28,20 @@ namespace St8Ment.DependencyInjection.States
             return this;
         }
 
+        public IStateReducerBuilder<TSubject> For(IStateConfiguration<TSubject> configuration)
+        {
+            if (configuration != null)
+            { 
+                var builder = new StateBuilder<TSubject>();
+                configuration.Configure(builder);
+                
+                var factory = builder.Build();
+                this.states.AddOrUpdate(configuration.StateId, key => factory, (key, _) => factory);
+            }
+
+            return this;
+        }
+
         internal IStateReducerCore<TSubject> Build(IServiceProvider provider)
         {
             var core = new ConcurrentDictionary<StateId, IActionProvider<TSubject>>(this.states.ToDictionary(k => k.Key, k => k.Value?.Invoke(provider)));

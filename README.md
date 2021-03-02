@@ -25,7 +25,7 @@ This version of the documentation will concern the overhauled version of the St8
     + [V1](#v1-1)
     + [V2](#v2-1)
   * [Coding Guide](#coding-guide)
-    + [Context](#context)
+    + [Subject](#subject)
       - [V2](#v2-2)
     + [Transitioners](#transitioners)
       - [V2](#v2-3)
@@ -40,7 +40,7 @@ This version of the documentation will concern the overhauled version of the St8
 
 ## The problem
 
-In the original state-pattern, the state objects (polymorphic implementations of a common state interface) contain the logic for state-transitions but also provide the same interface (in regards of methods/actions) as its subject (sometimes called context). This means that when the subject changes its interface (class-structure), the state objects also have to be refactored. Furthermore, the state objects themselves also determine into which state they transition next when a certain action is applied. All this logic is fairly simple to apply and provides robust state guarding and transitioning. However, the extendibility and hardcoded logic both make it difficult to change certain aspects without re-implementing the whole state-object (or state-objects when the subject changes).
+In the original state-pattern, the state objects (polymorphic implementations of a common state interface) contain the logic for state-transitions but also provide the same interface (in regards of methods/actions) as its subject. This means that when the subject changes its interface (class-structure), the state objects also have to be refactored. Furthermore, the state objects themselves also determine into which state they transition next when a certain action is applied. All this logic is fairly simple to apply and provides robust state guarding and transitioning. However, the extendibility and hardcoded logic both make it difficult to change certain aspects without re-implementing the whole state-object (or state-objects when the subject changes).
 
 ![state](docs/standard-state.png)
 
@@ -54,7 +54,7 @@ The implementations are based on modern **request + request-handler** style solu
 
 ### State
 
-The state-pattern based solution in this library uses a so-called state-reducer to create new states regarding a state-id and the subject/context. The state-objects refer to the reducer to get their corresponding action-providers which provides the action-handlers for a particular action that are registered on the respected state. These resulting action-handler objects are stored in key-value stores within the state-specific action-providers where the actions function as keys. When a state does contain an action-handler for a specific action, then that actions can be applied a possible transition into a new state could occur (that dependents on what the developer of that particular action-handler has in mind).
+The state-pattern based solution in this library uses a so-called state-reducer to create new states regarding a state-id and the subject. The state-objects refer to the reducer to get their corresponding action-providers which provides the action-handlers for a particular action that are registered on the respected state. These resulting action-handler objects are stored in key-value stores within the state-specific action-providers where the actions function as keys. When a state does contain an action-handler for a specific action, then that actions can be applied a possible transition into a new state could occur (that dependents on what the developer of that particular action-handler has in mind).
 
 The actions (and corresponding actions-handlers) can be registered to a particular state by the means of the aforementioned dependency injection extensions.
 
@@ -62,7 +62,7 @@ The actions (and corresponding actions-handlers) can be registered to a particul
 
 <img src="docs/St8-ment-state.png" alt="st8-ment" width ="700" height="500" />
 
-**NOTE:** Be aware that an action-handler object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern. Therefore they can make a decision to transition into a specific state or, when a specific condition fails for example, they could determine to transition into a different states. They could even choose to not transition into another state at all when no conditions are met. The subject/context will then stay in its current state. But these choices lay in the hands of the developers that create and manage their specific action-handlers.*
+**NOTE:** Be aware that an action-handler object does not always handle a single state transition as it more or less an equivalent to the effects from the Redux libraries. They contain the state-logic like the methods in the standard state-pattern. Therefore they can make a decision to transition into a specific state or, when a specific condition fails for example, they could determine to transition into a different states. They could even choose to not transition into another state at all when no conditions are met. The subject will then stay in its current state. But these choices lay in the hands of the developers that create and manage their specific action-handlers.*
 
 ### State-machine
 
@@ -82,11 +82,11 @@ The diagram shown below is there to help creating an understanding of the system
 
 **Steps:**
 
-1. The context (in most cases a data-model, system or an aggregate-root (DDD)) can hold a state and has an *AcceptAction(...)* method that accepts an action. 
+1. The subject (in most cases a data-model, system or an aggregate-root (DDD)) can hold a state and has an *AcceptAction(...)* method that accepts an action. 
 2. The action is transmitted it to the state accepted through its own *Accept* method.
 3. The incoming action is being verified by the state, to determine whether it has an action-handler for it. This verification is achieved by determining whether the action-provider (retrieved from the state-reducer) actually contains an action-handler for this action. **NOTE:** The action-providers are stored in a special storage core in the reducer per state-id, so when a state wants to consult its corresponding action-handler, it should do so by querying the state-reducer. However, it could be the case that there is no action-handler for the respected state, hence a special state-response is returned to notify the caller of the accept method. A same sort of process will occur when an action cannot be mapped to a corresponding action-handler from the retrieved action-provider.
-4. When the action-handler is successfully retrieved, it will be prompted to execute its logic regarding the provided action together with a state-view that contains the current state-id and the context. When the process succeeds, the state will then again consult the state-reducer by calling its *SetState(...)* method. This method needs both the target state-id and the subject/context.
-5. The state is then set to the context and the cycle is complete. **NOTE:** When initializing the subject/context, it is a good idea to call the state-reducer (typed for that context) and utilize the *SetState* method to setup the context with an initial state.
+4. When the action-handler is successfully retrieved, it will be prompted to execute its logic regarding the provided action together with a state-view that contains the current state-id and the subject. When the process succeeds, the state will then again consult the state-reducer by calling its *SetState(...)* method. This method needs both the target state-id and the subject.
+5. The state is then set to the subject and the cycle is complete. **NOTE:** When initializing the subject, it is a good idea to call the state-reducer (typed for that subject) and utilize the *SetState* method to setup the subject with an initial state.
 
 ### State-machine
 
@@ -117,14 +117,16 @@ Again a Redux-diagram-like diagram is used to visualize the steps for the state-
 
 This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application. At first the V1 version will be discussed and then the V2 will be compared to the V1 version per section.
 
-### Context
+### State
 
-#### State
+#### subject
 
-The context contains the state, although, it is not explicitly required by the interface. The reason for this is that the state is not directly available by default, it has to be set by the state-reducer by means of the *SetState(...)* method. The context delegates the determination of which actions are allow on current state of the context to the state itself, but also to transition into another state when specified.
+The subject contains the state, although, it is not explicitly required by the interface. The reason for this is that the state is not directly available by default, it has to be set by the state-reducer by means of the *SetState(...)* method. So a better practice is to have a dedicated subject-provider (or repository, etc.) that also retrieves the state-reducer and sets the state on the context. The subject delegates the determination of which actions are allow on current state of the subject to the state itself, but also to transition into another state when specified.
+
+**NOTE:** The aforementioned provider/repository/etc. for providing the subject does not have to do return this alongside the subject because it is implicitly stored in the state when the state is set to the subject, so the subject already has it.
 
 ```c#
-public class Order : IAggregateRoot, IStateContext<Order>
+public class Order : IAggregateRoot, IStateSubject<Order>
 {
     public IState<Order> State { get; private set; }
     
@@ -143,77 +145,43 @@ public class Order : IAggregateRoot, IStateContext<Order>
 }
 ```
 
-The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateContext<TContext> interface.
+The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateSubject<TSubject> interface.
 
-### Transitioners
+#### Action-Handlers
 
-To implement the state transitioners, the intention is to implement the StateTransitioner abstract-class instead of the IStateTransitioner interface, as the abstraction applies some specific generic operations that are applied in the background. 
+To implement the action-handlers, the intention is to implement the IActionHandler<TAction, TSubject> interface.
 
 ```c#
-public class CancelOrderStateTransitioner : StateTransitioner<ProcessedOrderState, Order, CancelOrderAction>
+public class CancelOrderStateTransitioner : IActionHandler<CancelOrderAction, Order>
 {
-    private readonly ISpecificationFactory factory;
+    private readonly IOrderService service;
     
-    public CancelOrderStateTransitioner(
-        IStateMachine<ExampleContext> stateMachine, 
-        ISpecificationFactory factory) : base(stateMachine) 
+    public CancelOrderStateTransitioner(IOrderService service)
     {
-        this.factory = factory;
+        this.service = service;
     }
     
-    protected override async Task Transition(
-        StateTransaction<CancelOrderAction, ProcessedOrderState> transaction, 
-        IStateMachine<Order> stateMachine, 
-        CancellationToken cancellationToken)
+    public async Task<StateId> Execute(CancelOrderAction action, IStateView<Order> state)
     {
-        var specification = factory.Obtain<ProcessedOrderState>(Specification.CanCancelOrderSpec);
-        if (specification?.IsSatisfiedBy(transaction.State) ?? false)
+        var status = await this.service.CancelOrderAsync(state.Subject);
+        if (status.Success)
         {
-            await specification.Handle(transaction.State);
-            stateMachine.Apply<CancelledOrderState>(transaction.State.Context);
-            return;
+            return OrderStates.Cancelled;
         }
         
-		// Do nothing or change state to a specific different state that handles a failed attempt to cancel the order.
+        if (status.Failed)
+        {
+            return OrderStates.Failed;
+        }
+        
+        return state.State;
     }
 }
 ```
 
-As you can see the transitioner can handle multiple specific paths of transitioning into different states regarding specific conditions. Notice that the StateTransitioner has three generics. The first one regards the current state, the second the context and the third one is the action it is supposed handle.
+Note that the action-handler can handle multiple specific cases by which the transitioning into different states is taking place. One important aspect of this mechanism is that the current-state can also be returned by simply returning the state property of the StateView. The StateView itself is a small container providing both the current-state and the subject.
 
-#### V2
-
-The V2 version of the transitioner has been drastically changed as the StateTransitioner abstract class is no longer needed to fulfill the right setup.
-
-```C#
-public class CancelOrderStateTransitioner : IStateTransitioner<ProcessedOrderState, Order, CancelOrderAction>
-{
-    private readonly ISpecificationFactory factory;
-    
-    public CancelOrderStateTransitioner(ISpecificationFactory factory) => this.factory = factory;
-    
-    public async Task Transition(IStateTransaction<CancelOrderAction, ProcessedOrderState> transaction)
-    {
-        var specification = factory.Obtain<ProcessedOrderState>(Specification.CanCancelOrderSpec);
-        if (specification?.IsSatisfiedBy(transaction.State) ?? false)
-        {
-            await specification.Handle(transaction.State);
-            transaction.State.Context.SetState(new ProcessingState(transaction.State.Context)
-            {
-                Data = transaction.State.Data
-            });
-            
-            return;
-        }
-        
-		// Do nothing or change state to a specific different state that handles a failed attempt to cancel the order.
-    }
-}
-```
-
-The IStateTransitioner interface can now be used directly. The StateMachine is no longer needed here as it has gained a more prominent role up front in the V2 version. Data transactions from one state to the other are also much more flexible.
-
-### Actions
+#### Actions
 
 The action object itself is not that interesting as it is more or less only a label in object form that can also contain some specific action-related data. For example:
 
@@ -221,47 +189,39 @@ The action object itself is not that interesting as it is more or less only a la
 public class CancleOrderAction : IAction { }
 ```
 
-In this case there is no specific data displayed, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects. 
+In this case there is no specific data provided by the action, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects. That's being said, recalling what has been stated at the beginning of this document is that these actions function as requests in a request-to-handler mechanism corresponding to their handlers, in this case the action-handlers, much like frameworks such as **MediatR**.
 
-The V2 version of the actions are the same.
+#### States
 
-### States
+The state objects are implemented internally through the State<TSubject> class which implements the IState<TSubject> interface. Everything regarded state is all applied internally. The only modifiable aspect about the state is the StateId. This abstract class should be extended and be given a name.
 
-The state objects are implemented by extending the State<TSelf, TContext> abstract class, which contains the IStateTransitionerProvider. The transitioner provider is used to determine the transitioner to use in regards to the provided action. When a transitioner for the specified action cannot be found, it will simply return false to indicate the transaction failed. 
+#### Registration and usage
 
-```C#
-public class NewOrderState : State<NewOrderState, Order>
-{
-    public NewOrderState(ExampleContext context, IStateTransitionerProvider provider) : base(context, provider)
-    {
-        this.Name = "A new order has been created";
-    }
-
-    public string Name { get; }
-
-    protected override NewOrderState GetSelf() => this;
-}
-```
-
-This NewOrderState is an implementation of the State object. It provides its own type with the TSelf generic of the State and the Order as context with the TContext generic. The GetSelf method returns the TSelf initialized object for usage in other cases. The state can contain specific data in regard to the relation between the context and that specific state.
-
-#### V2
-
-Again, like the transitioners, the V2 version of the states are a bit different. The State<TSelf, TContext> abstract class is still used but with a varied setup. The GetSelf method is no longer needed to provide the state as the state can now be created simply by calling its constructor. In the V1 version the states had a more prominent role with dependencies and had to be registered in the DI, while this role is no longer that prominent for version V2. Next to that, the V1 state needed to provide itself to the DI construction to simply construct itself, while as with the V2 version this is no longer the case.
+A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the **St8-ment.DependencyInjection** binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the *AddStateReducer* extension and therefore do not have a direct usage for the user/developer. The registration is applied through the use of builders in fluent-API style.
 
 ```c#
-public class NewOrderState : State<NewOrderState, Order>
+services.AddStateReducer<Order>((builder, provider) => 
 {
-    public NewOrderState(ExampleContext context) : base(context)
-    {
-        this.Name = "A new order has been created";
-    }
-
-    public string Name { get; }
-}
+    builder
+        .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Transition<CheckNewOrderTransitioner>())
+    	.For(OrderStates.CheckedOrder, bldr =>
+        {
+            bldr.On<RemoveOrderAction>().Transition<RemoveCheckedOrderHandler>())
+                .On<DeliverOrderAction>().Transition<DeliverCheckedOrderHandler>())
+                .On<FailedOrderAction>().Transition<FailedCheckedOrderHandler>());
+        })
+    	.For(OrderStates.DeliveredOrder, new DeliveredOrderStateConfiguration())
+    	.For(OrderStates.RemovedOrder)
+    	.For(OrderStates.FailedOrder)
+    	.For(OrderStates.CompletedOrder);
+});
 ```
 
-Nevertheless, the State abstraction still contains a Connect method, that accepts a StateMachine. The StateMachine, used here as visitor, uses the State object type to create the right abstraction.
+
+
+
+
+
 
 ### Registration and usage
 

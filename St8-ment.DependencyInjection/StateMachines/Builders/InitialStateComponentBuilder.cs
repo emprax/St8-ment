@@ -25,6 +25,20 @@ namespace St8Ment.DependencyInjection.StateMachines.Builders
             return new StateComponentCollectionBuilder(this.parent, this.provider);
         }
 
+        public IStateComponentCollectionBuilder ForInitial(IStateConfiguration configuration)
+        {
+            if (configuration is null)
+            {
+                throw new InvalidOperationException("When using state-configurations these should exist for the initial state.");
+            }
+
+            var component = this.GetOrAdd(configuration.StateId);
+            configuration.Configure(new StateComponentBuilder(component, this.provider));
+            this.InitialState = configuration.StateId;
+
+            return new StateComponentCollectionBuilder(this.parent, this.provider);
+        }
+
         private StateComponent GetOrAdd(StateId id)
         {
             if (!this.parent.TryGetValue(id, out var component))
