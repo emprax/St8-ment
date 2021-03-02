@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using St8_ment.Tests.Integration.Utilities;
 using St8_ment.DependencyInjection.States;
-using System.Threading.Tasks;
-using Xunit;
 using St8_ment.States;
+using St8_ment.Tests.Integration.Utilities;
+using Xunit;
 
 namespace St8_ment.Tests.Integration.States
 {
