@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using St8_ment.DependencyInjection.StateMachines.Builders;
-using St8_ment.StateMachines;
-using St8_ment.StateMachines.Components;
+using St8Ment.DependencyInjection.StateMachines.Builders;
+using St8Ment.StateMachines;
+using St8Ment.StateMachines.Components;
 
-namespace St8_ment.DependencyInjection.StateMachines
+namespace St8Ment.DependencyInjection.StateMachines
 {
     public static class ServiceCollectionExtensions
     {

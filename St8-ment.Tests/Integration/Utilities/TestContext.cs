@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using St8_ment.States;
+using St8Ment.States;
 
-namespace St8_ment.Tests.Integration.Utilities
+namespace St8Ment.Tests.Integration.Utilities
 {
     public class TestContext : IStateContext<TestContext>
     {

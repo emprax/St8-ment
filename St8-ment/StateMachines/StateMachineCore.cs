@@ -1,6 +1,6 @@
-﻿using St8_ment.StateMachines.Components;
+﻿using St8Ment.StateMachines.Components;
 
-namespace St8_ment.StateMachines
+namespace St8Ment.StateMachines
 {
     public class StateMachineCore : IStateMachineCore
     {

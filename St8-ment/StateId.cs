@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace St8_ment
+namespace St8Ment
 {
     public abstract class StateId : IEquatable<StateId>
     {

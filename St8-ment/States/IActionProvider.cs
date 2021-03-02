@@ -1,4 +1,4 @@
-﻿namespace St8_ment.States
+﻿namespace St8Ment.States
 {
     public interface IActionProvider<TContext> where TContext : class, IStateContext<TContext>
     {

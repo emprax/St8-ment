@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace St8_ment.States
+namespace St8Ment.States
 {
     public class StateResponse : IEquatable<StateResponse>
     {

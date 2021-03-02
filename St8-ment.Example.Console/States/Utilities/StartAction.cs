@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using St8_ment.States;
+using St8Ment.States;
 
-namespace St8_ment.Example.Console.States.Utilities
+namespace St8Ment.Example.Console.States.Utilities
 {
     public class StartAction : IAction
     {

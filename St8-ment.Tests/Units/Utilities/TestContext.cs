@@ -1,6 +1,6 @@
-﻿using St8_ment.States;
+﻿using St8Ment.States;
 
-namespace St8_ment.Tests.Units.Utilities
+namespace St8Ment.Tests.Units.Utilities
 {
     public class TestContext : IStateContext<TestContext>
     {

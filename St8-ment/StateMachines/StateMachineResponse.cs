@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace St8_ment.StateMachines
+namespace St8Ment.StateMachines
 {
     public class StateMachineResponse : IEquatable<StateMachineResponse>
     {

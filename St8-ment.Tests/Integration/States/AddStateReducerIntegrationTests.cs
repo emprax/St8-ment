@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using St8_ment.DependencyInjection.States;
-using St8_ment.States;
-using St8_ment.Tests.Integration.Utilities;
+using St8Ment.DependencyInjection.States;
+using St8Ment.States;
+using St8Ment.Tests.Integration.Utilities;
 using Xunit;
 
-namespace St8_ment.Tests.Integration.States
+namespace St8Ment.Tests.Integration.States
 {
     public class AddStateReducerIntegrationTests
     {

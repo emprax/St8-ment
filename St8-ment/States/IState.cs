@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace St8_ment.States
+namespace St8Ment.States
 {
     public interface IState<TContext> : IStateView<TContext> where TContext : class, IStateContext<TContext>
     {

@@ -1,4 +1,4 @@
-﻿namespace St8_ment.StateMachines
+﻿namespace St8Ment.StateMachines
 {
     public class StateTransitionResponse
     {

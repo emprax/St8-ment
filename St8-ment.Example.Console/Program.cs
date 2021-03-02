@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using St8_ment.Example.Console.StateMachines;
-using St8_ment.Example.Console.States;
+using St8Ment.Example.Console.StateMachines;
+using St8Ment.Example.Console.States;
 
-namespace St8_ment.Example.Console
+namespace St8Ment.Example.Console
 {
     public class Program
     {

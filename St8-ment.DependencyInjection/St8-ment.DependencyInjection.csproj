@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net50</TargetFrameworks>
-    <RootNamespace>St8_ment.DependencyInjection</RootNamespace>
+    <RootNamespace>St8Ment.DependencyInjection</RootNamespace>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Emprax</Authors>
     <Description>The Dependency Injection extension in regards to the St8-ment library. Provides an extension method that can be used with the Microsoft Dependency Injection library.</Description>

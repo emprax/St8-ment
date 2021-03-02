@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Moq;
-using St8_ment.StateMachines;
-using St8_ment.StateMachines.Components;
-using St8_ment.Tests.Units.Utilities;
+using St8Ment.StateMachines;
+using St8Ment.StateMachines.Components;
+using St8Ment.Tests.Units.Utilities;
 using Xunit;
 
-namespace St8_ment.Tests.Units.StateMachines
+namespace St8Ment.Tests.Units.StateMachines
 {
     public class StateMachineFactoryTests
     {

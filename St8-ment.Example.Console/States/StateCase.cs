@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using St8_ment.DependencyInjection.States;
-using St8_ment.Example.Console.States.Utilities;
-using St8_ment.States;
+using St8Ment.DependencyInjection.States;
+using St8Ment.Example.Console.States.Utilities;
+using St8Ment.States;
 
-namespace St8_ment.Example.Console.States
+namespace St8Ment.Example.Console.States
 {
     public class StateCase
     {

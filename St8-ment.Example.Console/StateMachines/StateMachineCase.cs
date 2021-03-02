@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using St8_ment.DependencyInjection.StateMachines;
-using St8_ment.Example.Console.StateMachines.Utilities;
-using St8_ment.StateMachines;
+using St8Ment.DependencyInjection.StateMachines;
+using St8Ment.Example.Console.StateMachines.Utilities;
+using St8Ment.StateMachines;
 
-namespace St8_ment.Example.Console.StateMachines
+namespace St8Ment.Example.Console.StateMachines
 {
     public class StateMachineCase
     {

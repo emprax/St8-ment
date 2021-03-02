@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace St8_ment.States
+namespace St8Ment.States
 {
     public interface IActionHandler<TAction, TContext>
         where TContext : class, IStateContext<TContext>

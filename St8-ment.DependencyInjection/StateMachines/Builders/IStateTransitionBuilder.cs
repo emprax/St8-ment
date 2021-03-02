@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using SpeciFire;
-using St8_ment.StateMachines;
+using St8Ment.StateMachines;
 
-namespace St8_ment.DependencyInjection.StateMachines.Builders
+namespace St8Ment.DependencyInjection.StateMachines.Builders
 {
     public interface IStateTransitionBuilder<TInput>
     {

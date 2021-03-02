@@ -1,4 +1,4 @@
-﻿namespace St8_ment.Example.Console
+﻿namespace St8Ment.Example.Console
 {
     public class ExampleState : StateId
     {

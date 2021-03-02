@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using SpeciFire;
 
-namespace St8_ment.StateMachines.Components
+namespace St8Ment.StateMachines.Components
 {
     public class SpecComponent : IItemStateComponent
     {

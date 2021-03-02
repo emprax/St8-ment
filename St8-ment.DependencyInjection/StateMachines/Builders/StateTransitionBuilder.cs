@@ -3,10 +3,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using SpeciFire;
 using SpeciFire.Specifications;
-using St8_ment.StateMachines;
-using St8_ment.StateMachines.Components;
+using St8Ment.StateMachines;
+using St8Ment.StateMachines.Components;
 
-namespace St8_ment.DependencyInjection.StateMachines.Builders
+namespace St8Ment.DependencyInjection.StateMachines.Builders
 {
     internal class StateTransitionBuilder<TInput> : IStateTransitionBuilder<TInput>
     {

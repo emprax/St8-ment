@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Moq;
-using St8_ment.States;
-using St8_ment.Tests.Units.Utilities;
+using St8Ment.States;
+using St8Ment.Tests.Units.Utilities;
 using Xunit;
 
-namespace St8_ment.Tests.Units.States
+namespace St8Ment.Tests.Units.States
 {
     public class StateReducerTests
     {

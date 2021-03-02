@@ -1,7 +1,7 @@
 ﻿using System;
-using St8_ment.StateMachines;
+using St8Ment.StateMachines;
 
-namespace St8_ment.DependencyInjection.StateMachines.Builders
+namespace St8Ment.DependencyInjection.StateMachines.Builders
 {
     public interface ISpecComponentBuilder<TInput>
     {

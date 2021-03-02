@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using St8_ment.StateMachines;
+using St8Ment.StateMachines;
 
-namespace St8_ment.Example.Console.StateMachines.Utilities
+namespace St8Ment.Example.Console.StateMachines.Utilities
 {
     public class ExampleCallback : ITransitionCallback<string>
     {

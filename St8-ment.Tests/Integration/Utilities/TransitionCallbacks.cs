@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using St8_ment.StateMachines;
+using St8Ment.StateMachines;
 
-namespace St8_ment.Tests.Integration.Utilities
+namespace St8Ment.Tests.Integration.Utilities
 {
     public class Test1Callback : ITransitionCallback<Test1Action>
     {

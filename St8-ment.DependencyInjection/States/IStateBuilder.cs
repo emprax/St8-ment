@@ -1,6 +1,6 @@
-﻿using St8_ment.States;
+﻿using St8Ment.States;
 
-namespace St8_ment.DependencyInjection.States
+namespace St8Ment.DependencyInjection.States
 {
     public interface IStateBuilder<TContext> where TContext : class, IStateContext<TContext>
     {

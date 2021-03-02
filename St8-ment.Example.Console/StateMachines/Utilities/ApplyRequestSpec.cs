@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using SpeciFire;
 
-namespace St8_ment.Example.Console.StateMachines.Utilities
+namespace St8Ment.Example.Console.StateMachines.Utilities
 {
     public class ApplyRequestSpec : Spec<string>
     {

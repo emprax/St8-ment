@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using St8_ment.DependencyInjection.StateMachines;
-using St8_ment.StateMachines;
-using St8_ment.Tests.Integration.Utilities;
+using St8Ment.DependencyInjection.StateMachines;
+using St8Ment.StateMachines;
+using St8Ment.Tests.Integration.Utilities;
 using Xunit;
 
-namespace St8_ment.Tests.Integration.StateMachines
+namespace St8Ment.Tests.Integration.StateMachines
 {
     public class StateMachineFactoryIntegrationTests
     {

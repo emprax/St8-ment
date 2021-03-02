@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace St8_ment.StateMachines.Components
+namespace St8Ment.StateMachines.Components
 {
     public class ActionsComponent : IItemStateComponent
     {

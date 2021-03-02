@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace St8_ment.StateMachines
+namespace St8Ment.StateMachines
 {
     public class StateMachineFactory<TKey> : IStateMachineFactory<TKey>
     {

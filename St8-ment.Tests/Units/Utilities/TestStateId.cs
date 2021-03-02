@@ -1,4 +1,4 @@
-﻿namespace St8_ment.Tests.Units.Utilities
+﻿namespace St8Ment.Tests.Units.Utilities
 {
     public class TestStateId : StateId
     {

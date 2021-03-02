@@ -1,4 +1,4 @@
-# <img src=".\docs\St8-ment-logo.png" width ="200" height="200" /> St8-ment
+# <img src=".\St8-ment-logo.png" width ="200" height="200" /> St8-ment
 
 ![Nuget](https://img.shields.io/nuget/v/St8-ment?color=green&style=plastic)
 
@@ -8,11 +8,9 @@ NuGet package pages:
 
 ## Introduction
 
-A more flexible state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system into individual components. These transitions can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other states.
+A dynamic state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system (here called the transitioners) into individual components. The transitioners can be viewed as request-handlers in a request-to-handler model. They respond to the input of an action and determine how a state transitions into other chosen states. An action and the respected state-object itself are combined into a transaction which is the actual request model. There the actions are labels as well as models at the same time. These contain the data for the requests.
 
-Previously, the library provided a V1 and V2 version. However, because of some new insights into the matter, the whole library has gained an total overhaul. Use a version before 2.0.0 to use of the previous setup. The [documentation](./docs/README(old).md) regarding that setup has been relocated to the /docs section.
-
-This version of the documentation will concern the overhauled version of the St8-ment library.
+The library provides a V1 and V2 version. The V1 is closely modelled after the State Design Pattern, whereas the V2 version is more or less the StateMachine version of this pattern. The V2 focusses less on the behavior in the state itself, something the V1 version does. Because of this, the state does not contain specific dependencies, in contrast to the V1 version where the state contains the transitioner-provider object. The state in V1 can thus only be created by the means of deriving them from dependency injection registrations. The V2 version does not place this emphasis on the state object and by this provides the possibility to use simple mapping from 1 state to another inside the provided transitioners. Conclusively this comes down to that the V1 version does not provide this possibility as the state holds the logic to determine which transitioners to use. Following that the context should at that point be more responsible for the data. The V2 provides more freedom as the state object is now more suitable to hold transient data similar to the action objects.
 
 ## Table of content
 

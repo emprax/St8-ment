@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace St8_ment.States
+namespace St8Ment.States
 {
     public class StateReducerCore<TContext> : IStateReducerCore<TContext> where TContext : class, IStateContext<TContext>
     {

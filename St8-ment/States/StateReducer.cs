@@ -1,4 +1,4 @@
-﻿namespace St8_ment.States
+﻿namespace St8Ment.States
 {
     public class StateReducer<TContext> : IStateReducer<TContext> where TContext : class, IStateContext<TContext>
     {

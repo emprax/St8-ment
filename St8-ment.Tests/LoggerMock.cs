@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace St8_ment.Tests
+namespace St8Ment.Tests
 {
     public class LoggerMock<T> : ILogger<T>, IDisposable
     {

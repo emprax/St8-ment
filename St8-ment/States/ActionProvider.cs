@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace St8_ment.States
+namespace St8Ment.States
 {
     public class ActionProvider<TContext> : IActionProvider<TContext> where TContext : class, IStateContext<TContext>
     {

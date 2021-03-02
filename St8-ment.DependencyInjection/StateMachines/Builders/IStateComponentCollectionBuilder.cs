@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace St8_ment.DependencyInjection.StateMachines.Builders
+namespace St8Ment.DependencyInjection.StateMachines.Builders
 {
     public interface IStateComponentCollectionBuilder
     {

@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using St8_ment.States;
+using St8Ment.States;
 
-namespace St8_ment.DependencyInjection.States
+namespace St8Ment.DependencyInjection.States
 {
     public class StateReducerFactoryBuilder<TKey, TContext> : IStateReducerFactoryBuilder<TKey, TContext> where TContext : class, IStateContext<TContext>
     {
