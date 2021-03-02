@@ -8,32 +8,34 @@ NuGet package pages:
 
 ## Introduction
 
-A more flexible state/state-machine pattern library for SOLID state pattern design. Achieved by separating the state-object and the action + transitioning system into individual components. These transitions can be viewed as **request-handlers** in a request-to-handler model (like modern library such as **MediatR**). They respond to the input of an action and determine how a state transitions into other states.
+A more flexible state/state-machine pattern library for **SOLID** state pattern design. Achieved by separating the state-object and the action + transitioning system into individual components. These transitions can be viewed as **request-handlers** in a request-to-handler model (like modern library such as [**MediatR**](https://github.com/jbogard/MediatR)). They respond to the input of an action and determine how a state transitions into other states.
 
-Previously, the library provided a V1 and V2 version. However, because of some new insights into the matter, the whole library has gained an total overhaul. Use a version before 2.0.0 to use of the previous setup. The [documentation](./docs/README(old).md) regarding that setup has been relocated to the /docs section.
+Previously, the library provided a V1 and V2 version. However, because of some new insights into the matter, the whole library has gained an total overhaul. Use a version before **2.0.0** to use of the previous setup. The [documentation](./docs/README(old).md) regarding that setup has been relocated to the /docs section.
 
-This version of the documentation will concern the overhauled version of the St8-ment library.
+This version of the documentation will concern the overhauled version of the **St8-ment** library.
 
 ## Table of content
 
 - [St8-ment](#st8-ment)
+  
   * [The problem](#the-problem)
   * [A solution](#a-solution)
-    + [V1](#v1)
-    + [V2](#v2)
+    + [State](#state)
+    + [State-machine](#state-machine)
   * [How it works](#how-it-works)
-    + [V1](#v1-1)
-    + [V2](#v2-1)
+    + [State workings](#state workings)
+    + [State-machine workings](#state-machine workings)
   * [Coding Guide](#coding-guide)
-    + [Subject](#subject)
-      - [V2](#v2-2)
-    + [Transitioners](#transitioners)
-      - [V2](#v2-3)
-    + [Actions](#actions)
-    + [States](#states)
-      - [V2](#v2-4)
-    + [Registration and usage](#registration-and-usage)
-      - [V2](#v2-5)
+    + [State coding](#state coding)
+      - [Subject](#subject)
+      - [Action-Handlers](#action-handlers)
+      - [Actions](#actions)
+      - [States](#states)
+      - [State-reducer registration and usage](#state-reducer registration and usage)
+    + [State-machine coding](#state-machine coding)
+      - [Guards](#guards)
+      - [Transition-callbacks](#transition-callbacks)
+      + [State-machine registration and usage](#state-machine registration and usage)
   - [Reasons for using this library](#reasons-for-using-this-library)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -66,7 +68,7 @@ The actions (and corresponding actions-handlers) can be registered to a particul
 
 ### State-machine
 
-The state-machine version in this library is setup differently in respect to the state-based version. The state-machine version provides a transitions into new states controlled by the type of input that is provided to the state-machine. Every transition can have its own guard (specification by **SpeciFire** library) and transition-callback, which are both completely optional but are recommended nonetheless. Every state has its own set of inputs it can react to, these can be registered to the state-machine by the aforementioned dependency injection extensions.
+The state-machine version in this library is setup differently in respect to the state-based version. The state-machine version provides a transitions into new states controlled by the type of input that is provided to the state-machine. Every transition can have its own guard (specification by [**SpeciFire**](https://github.com/emprax/SpeciFire) library) and transition-callback, which are both completely optional but are recommended nonetheless. Every state has its own set of inputs it can react to, these can be registered to the state-machine by the aforementioned dependency injection extensions.
 
 One specific difference in regards to the state-based version is that the transitions in the state-machine are predefined regarding into which new state the machine transitions. 
 
@@ -74,7 +76,7 @@ One specific difference in regards to the state-based version is that the transi
 
 ## How it works
 
-### State
+### State workings
 
 The diagram shown below is there to help creating an understanding of the system and it bears quite some similarity to the Redux diagram that can be found online. The numbers in the diagram refer to the steps that are described below the diagram. 
 
@@ -88,7 +90,7 @@ The diagram shown below is there to help creating an understanding of the system
 4. When the action-handler is successfully retrieved, it will be prompted to execute its logic regarding the provided action together with a state-view that contains the current state-id and the subject. When the process succeeds, the state will then again consult the state-reducer by calling its *SetState(...)* method. This method needs both the target state-id and the subject.
 5. The state is then set to the subject and the cycle is complete. **NOTE:** When initializing the subject, it is a good idea to call the state-reducer (typed for that subject) and utilize the *SetState* method to setup the subject with an initial state.
 
-### State-machine
+### State-machine workings
 
 Again a Redux-diagram-like diagram is used to visualize the steps for the state-machine based solution.
 
@@ -115,9 +117,9 @@ Again a Redux-diagram-like diagram is used to visualize the steps for the state-
 
 ## Coding Guide
 
-This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application. At first the V1 version will be discussed and then the V2 will be compared to the V1 version per section.
+This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application.
 
-### State
+### State coding
 
 #### subject
 
@@ -128,6 +130,12 @@ The subject contains the state, although, it is not explicitly required by the i
 ```c#
 public class Order : IAggregateRoot, IStateSubject<Order>
 {
+    private readonly OrderEntity order;
+    
+    public Order(OrderEntity order) => this.order = order;
+    
+    //...........
+    
     public IState<Order> State { get; private set; }
     
     public Task<bool> AcceptAction<TAction>(TAction action) where TAction : class, IAction
@@ -138,7 +146,7 @@ public class Order : IAggregateRoot, IStateSubject<Order>
     
     public void SetState(IState<Order> state)
     {
-     	this.State = state;
+        this.State = state;
     }
     
     //...........
@@ -189,133 +197,220 @@ The action object itself is not that interesting as it is more or less only a la
 public class CancleOrderAction : IAction { }
 ```
 
-In this case there is no specific data provided by the action, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects. That's being said, recalling what has been stated at the beginning of this document is that these actions function as requests in a request-to-handler mechanism corresponding to their handlers, in this case the action-handlers, much like frameworks such as **MediatR**.
+In this case there is no specific data provided by the action, but there are no rules against it, so feel free to add specific action-related data like what is similar to other commonly used request-like objects. That's being said, recalling what has been stated at the beginning of this document is that these actions function as requests in a request-to-handler mechanism corresponding to their handlers, in this case the action-handlers, much like frameworks such as [**MediatR**](https://github.com/jbogard/MediatR).
 
 #### States
 
 The state objects are implemented internally through the State<TSubject> class which implements the IState<TSubject> interface. Everything regarded state is all applied internally. The only modifiable aspect about the state is the StateId. This abstract class should be extended and be given a name.
 
-#### Registration and usage
+#### State-reducer registration and usage
 
-A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the **St8-ment.DependencyInjection** binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the *AddStateReducer* extension and therefore do not have a direct usage for the user/developer. The registration is applied through the use of builders in fluent-API style.
+A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the **St8-ment.DependencyInjection** binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are mostly only used by the *AddStateReducer* extension and therefore do not have a direct usage for the user/developer. The registration is applied through the use of builders in fluent-API style.
+
+There is, however, one explicit construction that can be utilized that comes with this extension library. This regards the IStateConfiguration<TSubject> interface to create place the whole configuration regarding a specific state into a dedication configuration class, like the fluent configuration clients for **Entity Framework**.
 
 ```c#
 services.AddStateReducer<Order>((builder, provider) => 
 {
     builder
-        .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Transition<CheckNewOrderTransitioner>())
-    	.For(OrderStates.CheckedOrder, bldr =>
+        .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Handle<CheckNewOrderTransitioner>())
+        .For(OrderStates.CheckedOrder, bldr =>
         {
-            bldr.On<RemoveOrderAction>().Transition<RemoveCheckedOrderHandler>())
-                .On<DeliverOrderAction>().Transition<DeliverCheckedOrderHandler>())
-                .On<FailedOrderAction>().Transition<FailedCheckedOrderHandler>());
+            bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>())
+                .On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>())
+                .On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>());
         })
-    	.For(OrderStates.DeliveredOrder, new DeliveredOrderStateConfiguration())
-    	.For(OrderStates.RemovedOrder)
-    	.For(OrderStates.FailedOrder)
-    	.For(OrderStates.CompletedOrder);
+        .For(new DeliveredOrderStateConfiguration())
+        .For(OrderStates.RemovedOrder)
+        .For(OrderStates.FailedOrder)
+        .For(OrderStates.CompletedOrder);
 });
 ```
 
+Every state is registered by a *For(...)* method which, in the basis, accepts a state-id object instance and a configuration-lambda to build-up the action-triggered transitions. The builders have internal building mechanisms, hence the user/developer does not have to provide such an action.
 
+A possible implementation of the IStateConfiguration<TSubject> interface looks like this:
 
-
-
-
-
-### Registration and usage
-
-A new IServiceCollection extension is used to connect all the aforementioned components. It is provided by the St8-ment.DependencyInjection binary. A whole set of builders, appliers and other constructions are provided by this binary as well, but these are purely used by the AddStateMachine extension and have therefore not a direct usage for the user/developer.
-
-```C#
-services.AddStateMachine<Order>(builder => 
+```c#
+public class DeliveredOrderStateConfiguration : IStateConfiguration<Order>
 {
-    builder.For<NewOrderState>(configurator => configurator.On<CheckOrderAction>().Transition<CheckNewOrderTransitioner>());
-    builder.For<CheckedOrderState>(configurator =>
+    public StateId StateId => OrderState.Delivered;
+    
+    public void Configure(IStateBuilder<Order> builder)
     {
-        configurator.On<RemoveOrderAction>().Transition<RemoveCheckedOrderTransitioner>());
-        configurator.On<DeliverOrderAction>().Transition<DeliverCheckedOrderTransitioner>());
-        configurator.On<FailedOrderAction>().Transition<FailedCheckedOrderTransitioner>());
-    });
-    builder.For<DeliveredOrderState>(new DeliveredOrderStateConfiguration());
-    builder.For<RemovedOrderState>();
-    builder.For<FailedOrderState>();
-    builder.For<CompletedOrderState>();
-});
-```
-
-A few things can be observed within this section. The configuration for a specific state can be created by using the For method on the builder, followed by either a lambda-expression that registers all transitioners or by a custom configuration that extends the StateConfiguration abstract class. At last, there is the option to register no configuration for a state at all. This is necessary for assuring that the state-machine knows that particular state, but doesn't have any actions for it, effectively creating a *sink* state.
-
-An example of a custom state-configuration would look like this:
-
-```C#
-public class DeliveredOrderStateConfiguration : StateConfiguration<DeliveredOrderState, Order>
-{
-    protected override void Configure(IStateConfigurator<TState, TContext> configurator)
-    {
-        configurator
-            .On<CancelOrderAction>()
-            .Transition<CancelDeliveredOrderTransitioner>();
-        
-        configurator
-            .On<FailedOrderAction>()
-            .Transition<FailedDeliveredOrderTransitioner>();
-        
-        configurator
-            .On<CompleteOrderAction>()
-            .Transition<CompleteDeliveredOrderTransitioner>();
+        builder
+            .On<CancelOrderAction>().Handle<CancelDeliveredOrderHandler>()
+            .On<FailedOrderAction>().Handle<FailedDeliveredOrderHandler>()
+            .On<CompleteOrderAction>().Handle<CompleteDeliveredOrderHandler>();
     }
 }
 ```
 
+**NOTE:** The state-reducer defined for a subject is registered Singleton, because it does not hold any state for its own and recreates the action-handlers and states on the fly, so the structure and order is therefore set in stone. However, when multiple different configurations of the state-reducer for the same subject have to be defined, a few specific constructs can be used to make this possible.
+
+First is the the IStateReducerFactory<TKey, TSubject>, which is provided by the St8-ment core library and can be constructed as:
+
+```c#
+services.AddStateReducerFactory<string, Order>((builder, provider) => 
+{
+    builder
+        AddStateReducer("ORDER-CREATION", buildr =>
+        {
+            buildr
+                .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Handle<CheckNewOrderHandler>())
+                .For(OrderStates.CheckedOrder, bldr =>
+                {
+                    bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>())
+                        .On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>())
+                        .On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>());
+                });
+        })
+        .AddStateReducer("ORDER-DISTRIBUTION", buildr =>
+        {
+            buildr
+                .For(new DeliveredOrderStateConfiguration())
+                .For(OrderStates.RemovedOrder)
+                .For(OrderStates.FailedOrder)
+                .For(OrderStates.CompletedOrder);
+        });
+});
+
+........
+    
+var reducer = this.factory.Create("ORDER-CREATION");	// When having the factory as dependency, it can create reducers.
+reducer.SetState(OrderStates.New, order);				// One of the first common steps: Give the subject its initial state.
+```
+
+A possible second strategy is to use the [**ModulR**](https://github.com/emprax/ModulR) library to create custom IServiceCollection modules.
+
+And now, a possible implementation regarding a repository providing a domain object and sets the initial state:
+
+```c#
+public class OrderRepository
+{
+    private readonly DbContext context;
+    private readonly IStateReducer<>
+    
+    public async Task<Order> GetAsync(OrderNumber number)
+    {
+		var entity = await this.context
+            .Set<OrderEntity>()
+            .SingleOrDefault(o => o.Number == number);	// Entity Framework implementation.
+        
+        var order new Order(entity);					// wrapping domain object strategy is used here.
+        this.reducer.SetState(OrderStates.New, order);  // Set the initial state.
+        
+        return order;
+    }
+}
+
+......
+
+// The first state is NewOrderState which can transition into the CheckedOrderState.
+await order.Apply(new CheckOrderAction());
+    
+// The CheckedOrderState can transition into the DeliveredOrderState.
+await order.Apply(new DeliverOrderAction());
+```
+
+
+
+### State-machine coding
+
+#### Guards
+
+The guards are an optional addition to refine transitions. They guard the transitions with particular specifications. Such a specification is implements the ISpec<TContext> interface, provided by the [**SpeciFire**](https://github.com/emprax/SpeciFire) library.
+
+```c#
+public class HasPublishCommandSpec : Spec<string>
+{
+    public Expression AsExpression() => (value => value?.Contains("PUBLISH:") ?? false);
+}
+```
+
+#### Transition-callbacks
+
+The transition-callbacks are also an optional addition to refine transitions. They apply certain operations when their corresponding transition flows are executed. Such a transition-callback implements the ITransitionCallback<TInput> interface:
+
+```c#
+public class PublishCommandCallback : ITransitionCallback<string>
+{
+    private readonly ICommandCentre commandCentre;
+    
+    public PublishCommandCallback(ICommandCentre commandCentre) => this.commandCentre = commandCentre;
+    
+    public async Task Execute(string action)
+    {
+        //......
+        await this.commandCentre.ApplyCommand(action);
+        //......
+    }
+}
+```
+
+#### State-machine registration and usage
+
+The dependency injection extensions for this library also contain the AddStateMachine and AddStateMachineFactory extensions. Other classes, except for the IStateConfiguration interface, have no direct usages for the user/developer and are for internally utilized mechanisms. Note the *OnDefault()* calls, these are for default transition flows for when nothing else can matches.
+
+```C#
+services.AddStateMachine((builder, provider) => 
+{
+    builder
+        .For(CommandStates.New, bldr => bldr.On<string>().To(CommandStates.Checking))
+        .For(CommandStates.Published, bldr =>
+        {
+            bldr.On<string>().WithGuard<HasCompletionCommandSpec>().To(CommandStates.Completed)
+                .OnDefault().To(CommandStates.Checking);
+        })
+    	.For(new RemovedCommandStateConfiguration())
+        .For(CommandStates.Fault)
+        .For(CommandStates.Checking, bldr => 
+        {
+            bldr.On<string>()
+                .WithGuard<HasPublishCommandSpec>().WithCallback<PublishCommandCallback>().To(CommandStates.Published)
+                .On<string>().WithCallback<RemoveCommandCallback>().To(CommandStates.Removed);
+        })
+        .For(CommandStates.Completed);
+});
+```
+
+A few things can be observed within this section. The configurations for the states work again on state-ids and trigger on specific input types. Each *On<TInput>()* method provides its own transition path. Each path can have a guard and a transition-callback, and these can be registered in a multitude of ways as there are a number of method overloads for these registration methods. This is displayed as well in the example of a state-configuration below.
+
+An example of a custom state-configuration would look like this:
+
+```C#
+public class RemovedCommandStateConfiguration : StateConfiguration
+{
+    protected override void Configure(IStateComponentBuilder builder)
+    {
+        builder
+            .OnDefault().WithCallback<FaultedCommandNotificationCallback>().To(CommandStates.Fault)
+            .On<string>().WithGuard(x => x.Contains("COMPLETE:"))
+                         .WithCallback<CompleteCommandCallback>().To(CommandStates.Completed);
+    }
+}
+```
+
+The factory part of the library has a similar setup as that the one of the state-based solution. Only here the constructions as seen in the above code sections are used instead of the state-based factory setup. So, the *AddStateReducer(...)* methods in the *AddStateReducerFactory<TKey, TSubject>(...)* extension are written here as *AddStateMachine(...)* methods in the *AddStateMachineFactory<TKey>(...)* extension with the registration code for state-machines from the code sections above.
+
 Now, when everything is registered, the system can be used in software solutions. 
 
 ```c#
-var order = Order.Create(...);
-stateMachine.Apply<NewOrderState>(order);
+// 1.)  Starting at the NEW-state and applying some text.
+await this.stateMachine.Apply("SOME FANCY TEXT.");
 
-......
+// 2.)  The previous step ensured that the state-machine transitioned into the CHECKING-state.
+await this.stateMachine.Apply("PUBLISH: This new fancy text.");
 
-// The first state is NewOrderState which can transition into the CheckedOrderState.
-await order.Accept(new CheckOrderAction(), CancellationToken.None);	 
+// 3.)  Because of the text applied in the previous step containing 'PUBLISH:', the state-machine transitioned into PUBLISHED.
+await this.stateMachine.Apply("COMPLETE: This new fancy text that was published.");
 
-// The CheckedOrderState can transition into the DeliveredOrderState.
-await order.Accept(new DeliverOrderAction(), CancellationToken.None);
-
-// The DeliveredOrderState can transition into the CompletedOrderState.
-await order.Accept(new CompleteOrderAction(), CancellationToken.None);
+// FINALLY: Because the PUBLISHED-state has the HasCompleteCommandSpec to check the inputted text,
+// the state-machine finished in the COMPLETED-state.
 ```
-
-#### V2
-
-The V2 version of the registrations for the StateMachines is near identical to the V1 version. The use of the StateMachine however, is a bit different.
-
-```c#
-var order = Order.Create(...);
-order.SetState(new NewOrderState(order));
-
-......
-
-// The first state is NewOrderState which can transition into the CheckedOrderState.
-await order.State
-    .Connect(stateMachine)
-    .Apply(new CheckOrderAction());
-    
-// The CheckedOrderState can transition into the DeliveredOrderState.
-await order.State
-    .Connect(stateMachine)
-    .Apply(new DeliverOrderAction());
-
-// The DeliveredOrderState can transition into the CompletedOrderState. Note the use of the StateContextExtensions Apply method.
-await order.Apply(stateMachine, new CompleteOrderAction());
-```
-
-First the state in the context is set to a new order (note that this could also be integration in a more intuitive way, but it depends on the choices of the developer. The simple, but still a bit specific, use of the SetState method is shown here to illustrate an example of usage). The state in the context is visited by the StateMachine through the Connect method of the state. The StateMachine retrieves some specific state type setup and can then retrieve the right TransitionerProvider by providing a specific ActionAccepter. The action is applied to the accepter and the state system is set in motion. 
-
-Note the use of a specific extension-method called *Apply*, what is an extension of the IStateContext and encapsulates the aforementioned State - StateMachine with Action interaction.
 
 
 
 ## Reasons for using this library
 
-This library is useful for a more dynamic and solidified state pattern design. Note that the state pattern is already known for being quite a suitable design pattern in multiple solutions. Therefore this library provides even more SOLID design in state usage. The library has quite some similarities to the Redux library, but it is still its own take on the appliance of state and the patterns that are related to that. Hence this library is more or less a combination of the state pattern and state-machine pattern with some Redux influences. So, when wanting to use a SOLID designed state transitioning system for your software, where that is on par with front-end libraries like Redux and NGRX, then this library is a great choice.
+This library is useful for a more flexible, modern and solidified state pattern design. Note that the state pattern is already known for being quite a suitable design pattern in multiple solutions. Therefore this library provides even more SOLID design in state usage. The library has quite some similarities to the Redux library, but it is still its own take on the appliance of state and the patterns that are related to that, and not to forget that the Redux-pattern is for state-management on applications themselves, so guarded state-pattern application in programming structures is not the focus there. Hence this library is more or less a combination of the state-pattern and state-machine pattern with some influences from different approaches and modern loose-coupling practices. So, when wanting to use a SOLID designed state transitioning systems or a more flexible but still guarded state-pattern implementation for your software, then this library is a great choice.
