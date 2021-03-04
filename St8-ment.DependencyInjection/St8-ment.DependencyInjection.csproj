@@ -6,11 +6,12 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Emprax</Authors>
     <Description>The Dependency Injection extension in regards to the St8-ment library. Provides an extension method that can be used with the Microsoft Dependency Injection library.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression></PackageLicenseExpression>
     <RepositoryUrl>https://github.com/emprax/St8-ment</RepositoryUrl>
     <PackageTags>extension,state,statemachine,state-machine,redux</PackageTags>
     <PackageIcon>St8-ment-logo.png</PackageIcon>
     <Version>2.0.0</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +24,10 @@
 
   <ItemGroup>
     <None Include="..\docs\St8-ment-logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
