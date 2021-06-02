@@ -1,10 +1,8 @@
 # <img src=".\docs\St8-ment-logo.png" width ="200" height="200" /> St8-ment
 
-![Nuget](https://img.shields.io/nuget/v/St8-ment?color=green&style=plastic)
-
 NuGet package pages:
-- [St8-ment](https://www.nuget.org/packages/St8-ment/)
-- [St8-ment.DependencyInjection](https://www.nuget.org/packages/St8-ment.DependencyInjection/)
+- [St8-ment](https://www.nuget.org/packages/St8-ment/) ![Nuget](https://img.shields.io/nuget/v/St8-ment?color=green&style=plastic)
+- [St8-ment.DependencyInjection](https://www.nuget.org/packages/St8-ment.DependencyInjection/) ![Nuget](https://img.shields.io/nuget/v/St8-ment.DependencyInjection?color=green&style=plastic)
 
 ## Introduction
 
