@@ -393,7 +393,7 @@ public class RemovedCommandStateConfiguration : StateConfiguration
             .On<string>()
                 .WithGuard(x => x.Contains("COMPLETE:"))
                 .WithCallback<CompleteCommandCallback>()
-            .To(CommandStates.Completed);
+                .To(CommandStates.Completed);
     }
 }
 ```
