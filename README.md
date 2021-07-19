@@ -365,8 +365,13 @@ services.AddStateMachine((builder, provider) =>
         .For(CommandStates.Checking, bldr => 
         {
             bldr.On<string>()
-                .WithGuard<HasPublishCommandSpec>().WithCallback<PublishCommandCallback>().To(CommandStates.Published)
-                .On<string>().WithCallback<RemoveCommandCallback>().To(CommandStates.Removed);
+                .WithGuard<HasPublishCommandSpec>()
+                .WithCallback<PublishCommandCallback>()
+                .To(CommandStates.Published)
+                
+            bldr.On<string>()
+                .WithCallback<RemoveCommandCallback>()
+                .To(CommandStates.Removed);
         })
         .For(CommandStates.Completed);
 });
@@ -382,9 +387,13 @@ public class RemovedCommandStateConfiguration : StateConfiguration
     protected override void Configure(IStateComponentBuilder builder)
     {
         builder
-            .OnDefault().WithCallback<FaultedCommandNotificationCallback>().To(CommandStates.Fault)
-            .On<string>().WithGuard(x => x.Contains("COMPLETE:"))
-                         .WithCallback<CompleteCommandCallback>().To(CommandStates.Completed);
+            .OnDefault()
+                .WithCallback<FaultedCommandNotificationCallback>()
+                .To(CommandStates.Fault)
+            .On<string>()
+                .WithGuard(x => x.Contains("COMPLETE:"))
+                .WithCallback<CompleteCommandCallback>()
+            .To(CommandStates.Completed);
     }
 }
 ```
