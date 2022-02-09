@@ -13,29 +13,33 @@ namespace St8Ment.Example.Console.States.Utilities
 
     public class StartActionHandler : IActionHandler<StartAction, ExampleContext>
     {
-        public Task<StateId> Execute(StartAction action, IStateView<ExampleContext> state) => Task.Run<StateId>(() =>
+        public Task Execute(StartAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
         {
             System.Console.WriteLine("  - Action arrived in start-action-handler. Action content: {0}.", action?.Text);
             if (string.IsNullOrWhiteSpace(action?.Text))
             {
                 System.Console.WriteLine("    + Faulted result");
-                return ExampleState.Fault;
+                state.Transition(ExampleState.Fault);
+
+                return;
             }
 
             if (action.Text.Contains("Revoke"))
             {
                 System.Console.WriteLine("    + Revoked result");
-                return ExampleState.Revoked;
+                state.Transition(ExampleState.Revoked);
+
+                return;
             }
 
             System.Console.WriteLine("    + Started result");
-            return ExampleState.New;
+            state.Transition(ExampleState.New);
         });
     }
 
     public class RevokeActionHandler : IActionHandler<RevokeAction, ExampleContext>
     {
-        public Task<StateId> Execute(RevokeAction action, IStateView<ExampleContext> state) => Task.Run<StateId>(() =>
+        public Task Execute(RevokeAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
         {
             System.Console.WriteLine(
                 "  - Revoke action arrived in start-action-handler. Action dispatched at: {0} for reason: {1}.",
@@ -45,22 +49,24 @@ namespace St8Ment.Example.Console.States.Utilities
             if (string.IsNullOrWhiteSpace(action?.Reason))
             {
                 System.Console.WriteLine("    + Faulted result");
-                return ExampleState.Fault;
+                state.Transition(ExampleState.Fault);
+
+                return;
             }
 
             System.Console.WriteLine("    + Revoked result");
-            return ExampleState.Revoked;
+            state.Transition(ExampleState.Revoked);
         });
     }
 
     public class PublishActionHandler : IActionHandler<PublishAction, ExampleContext>
     {
-        public Task<StateId> Execute(PublishAction action, IStateView<ExampleContext> state) => Task.Run<StateId>(() =>
+        public Task Execute(PublishAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
         {
             System.Console.WriteLine("  - Publish action arrived in start-action-handler. Action dispatched at: {0}.", action?.At);
-            
             System.Console.WriteLine("    + Published result");
-            return ExampleState.Published;
+
+            state.Transition(ExampleState.Published);
         });
     }
 }

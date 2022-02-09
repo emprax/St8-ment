@@ -15,13 +15,13 @@ namespace St8Ment.Tests
         {
             this.levels = new ConcurrentDictionary<LogLevel, KeyValuePair<uint, string[]>>(new[]
             {
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Information, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Error, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Warning, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Critical, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Debug, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Trace, new KeyValuePair<uint, string[]>(0, new string[0])),
-                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.None, new KeyValuePair<uint, string[]>(0, new string[0]))
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Information, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Error, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Warning, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Critical, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Debug, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.Trace, new KeyValuePair<uint, string[]>(0, Array.Empty<string>())),
+                new KeyValuePair<LogLevel, KeyValuePair<uint, string[]>>(LogLevel.None, new KeyValuePair<uint, string[]>(0, Array.Empty<string>()))
             });
         }
 
@@ -33,13 +33,13 @@ namespace St8Ment.Tests
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            var item = this.levels[logLevel];
-            var messages = new List<string>(item.Value)
+            var (key, value) = this.levels[logLevel];
+            var messages = new List<string>(value)
             {
                 formatter.Invoke(state, exception)
             };
 
-            this.levels[logLevel] = new KeyValuePair<uint, string[]>(item.Key + 1, messages.ToArray());
+            this.levels[logLevel] = new KeyValuePair<uint, string[]>(key + 1, messages.ToArray());
         }
 
         public void VerifyTimes(LogLevel level, uint times) => Assert.Equal(times, this.levels[level].Key);

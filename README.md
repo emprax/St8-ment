@@ -10,19 +10,20 @@ A more flexible state/state-machine pattern library for **SOLID** state pattern 
 
 Previously, the library provided a V1 and V2 version. However, because of some new insights into the matter, the whole library has gained an total overhaul. Use a version before **2.0.0** to use of the previous setup. The [documentation](./docs/README(old).md) regarding that setup has been relocated to the /docs section.
 
-This version of the documentation will concern the overhauled version of the **St8-ment** library.
+This version (3.0.0) of the **St8-ment** library contains a new subdivision in regards of state usage. This new approach is called the _State-Forge_ and is a response to concept of combining both the _State_ and _State-Machine_ pattern approaches. Furthermore, it is important to note that in this version the ActionHandlers and registration for the _State_ pattern approach have some breaking changes and should be addressed when upgrading.
 
 ## Table of content
 
 - [St8-ment](#st8-ment)
-  
   * [The problem](#the-problem)
   * [A solution](#a-solution)
     + [State](#state)
     + [State-machine](#state-machine)
+    + [State-forge](#state-forge)
   * [How it works](#how-it-works)
     + [State workings](#state-workings)
     + [State-machine workings](#state-machine-workings)
+    + [State-forge workings](#state-forge-workings)
   * [Coding Guide](#coding-guide)
     + [State coding](#state-coding)
       - [Subject](#subject)
@@ -33,7 +34,11 @@ This version of the documentation will concern the overhauled version of the **S
     + [State-machine coding](#state-machine-coding)
       - [Guards](#guards)
       - [Transition-callbacks](#transition-callbacks)
-      + [State-machine registration and usage](#state-machine-registration-and-usage)
+      - [State-machine registration and usage](#state-machine-registration-and-usage)
+    + [State-forge coding](#state-forge-coding)
+      - [Difference in subject](#difference-in-subject)
+      - [State-Forge and State](#state-forge-and-state)
+      - [State-forge registration and usage](#state-forge-registration-and-usage)
   - [Reasons for using this library](#reasons-for-using-this-library)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
@@ -71,6 +76,9 @@ The state-machine version in this library is setup differently in respect to the
 One specific difference in regards to the state-based version is that the transitions in the state-machine are predefined regarding into which new state the machine transitions. 
 
 **NOTE:** *When a callback is execute and throws an exception, then this exception will be caught and provided in a specific result, however, the transition into the targeted state will no longer occur at that moment.*
+
+### State-forge
+The state-forge is a response to concept of combining both the _State_ and _State-Machine_ pattern approaches. It comes down to the idea of using the _State_ version approach, although the state is no longer held inside the state-subject. The reason for this is for when someone decides to create a state-subject that is not approached in a more aggregate type of way, or is more or less very transient in approach. When that is the case it could be very frustrating to have the state-subject be applied in such a way that it is always up for providing the state dependencies as it is currently done with the _State_ version of this library. So, to mitigate this problem it has been decided to at a state-forge as a injectable service into other clients or services much like the state-machine of the _State-machine_ version of this library. Therefore, the state-subject is just the holder of the state-id, being suitable to just be a data model type of object.
 
 ## How it works
 
@@ -113,6 +121,9 @@ Again a Redux-diagram-like diagram is used to visualize the steps for the state-
 4. The retrieved state (ID) will be returned to the state-machine.
 5. The state-machine will update its state by setting the new state-id.
 
+### State-forge workings
+The workings of the _State-forge_ version of this library is nearly identical to the _State_ version. The difference is that the state-forge is a dependency that accepts a specific state-subject to provide the application of actions on the provided state, instead of the state-subject being the entrypoint, directing to the internal state. It is a more dependency safe solution than the standard _State_ version.
+
 ## Coding Guide
 
 This section emphasizes the important components of the library on behalf of some coding examples. Starting with the definition of some of the components in regard to their purpose and location within an application.
@@ -121,37 +132,22 @@ This section emphasizes the important components of the library on behalf of som
 
 #### subject
 
-The subject contains the state, although, it is not explicitly required by the interface. The reason for this is that the state is not directly available by default, it has to be set by the state-reducer by means of the *SetState(...)* method. So a better practice is to have a dedicated subject-provider (or repository, etc.) that also retrieves the state-reducer and sets the state on the context. The subject delegates the determination of which actions are allow on current state of the subject to the state itself, but also to transition into another state when specified.
+The subject contains the state. The state has to be set by the state-reducer by means of the *SetState(...)* method. So the best practice is to have a dedicated subject-provider (or repository, etc.) that retrieves, next to the state-subject implementing entity, also the state-reducer and places the state on the context. The subject delegates the determination of which actions are allow on current state of the subject to the state itself, but also to transition into another state when specified.
 
 **NOTE:** The aforementioned provider/repository/etc. for providing the subject does not have to do return this alongside the subject because it is implicitly stored in the state when the state is set to the subject, so the subject already has it.
 
 ```c#
-public class Order : IAggregateRoot, IStateSubject<Order>
+public class Order : ExtendedStateSubject<Order>, IAggregateRoot
 {
     private readonly OrderEntity order;
     
     public Order(OrderEntity order) => this.order = order;
     
     //...........
-    
-    public IState<Order> State { get; private set; }
-    
-    public Task<bool> AcceptAction<TAction>(TAction action) where TAction : class, IAction
-    {
-        //...........
-        return State.Accept(action);
-    }
-    
-    public void SetState(IState<Order> state)
-    {
-        this.State = state;
-    }
-    
-    //...........
 }
 ```
 
-The *Accept(...)* and *SetState(...)* methods are the to be implemented methods regarding the IStateSubject<TSubject> interface.
+The *Apply(...)* and *SetState(...)* methods are defined by the _ExtendedStateSubject<TSubject>_ abstraction, though can be overriden.
 
 #### Action-Handlers
 
@@ -167,25 +163,27 @@ public class CancelOrderStateTransitioner : IActionHandler<CancelOrderAction, Or
         this.service = service;
     }
     
-    public async Task<StateId> Execute(CancelOrderAction action, IStateView<Order> state)
+    public async Task Execute(CancelOrderAction action, IStateHandle<Order> state)
     {
         var status = await this.service.CancelOrderAsync(state.Subject);
         if (status.Success)
         {
-            return OrderStates.Cancelled;
+            state.Transition(OrderStates.Cancelled);
+            return Task.CompletedTask;
         }
         
         if (status.Failed)
         {
-            return OrderStates.Failed;
+            state.Transition(OrderStates.Failed);
         }
         
-        return state.State;
+        // No need for change here, the state stays the same.
+        return Task.CompletedTask;
     }
 }
 ```
 
-Note that the action-handler can handle multiple specific cases by which the transitioning into different states is taking place. One important aspect of this mechanism is that the current-state can also be returned by simply returning the state property of the StateView. The StateView itself is a small container providing both the current-state and the subject.
+Note that the action-handler can handle multiple specific cases by which the transitioning into different states is taking place. The StateHandle is a small container providing both the subject and the transitioning functionality towards a new state.
 
 #### Actions
 
@@ -214,9 +212,9 @@ services.AddStateReducer<Order>((builder, provider) =>
         .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Handle<CheckNewOrderTransitioner>())
         .For(OrderStates.CheckedOrder, bldr =>
         {
-            bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>())
-                .On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>())
-                .On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>());
+            bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>();
+            bldr.On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>();
+            bldr.On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>();
         })
         .For(new DeliveredOrderStateConfiguration())
         .For(OrderStates.RemovedOrder)
@@ -236,10 +234,9 @@ public class DeliveredOrderStateConfiguration : IStateConfiguration<Order>
     
     public void Configure(IStateBuilder<Order> builder)
     {
-        builder
-            .On<CancelOrderAction>().Handle<CancelDeliveredOrderHandler>()
-            .On<FailedOrderAction>().Handle<FailedDeliveredOrderHandler>()
-            .On<CompleteOrderAction>().Handle<CompleteDeliveredOrderHandler>();
+        builder.On<CancelOrderAction>().Handle<CancelDeliveredOrderHandler>();
+        builder.On<FailedOrderAction>().Handle<FailedDeliveredOrderHandler>();
+        builder.On<CompleteOrderAction>().Handle<CompleteDeliveredOrderHandler>();
     }
 }
 ```
@@ -258,9 +255,9 @@ services.AddStateReducerFactory<string, Order>((builder, provider) =>
                 .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Handle<CheckNewOrderHandler>())
                 .For(OrderStates.CheckedOrder, bldr =>
                 {
-                    bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>())
-                        .On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>())
-                        .On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>());
+                    bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>();
+                    bldr.On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>();
+                    bldr.On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>();
                 });
         })
         .AddStateReducer("ORDER-DISTRIBUTION", buildr =>
@@ -287,11 +284,11 @@ And now, a possible implementation regarding a repository providing a domain obj
 public class OrderRepository
 {
     private readonly DbContext context;
-    private readonly IStateReducer<>
+    private readonly IStateReducer<Order> reducer;
     
     public async Task<Order> GetAsync(OrderNumber number)
     {
-	var entity = await this.context
+	    var entity = await this.context
             .Set<OrderEntity>()
             .SingleOrDefault(o => o.Number == number);	// Entity Framework implementation.
         
@@ -416,6 +413,59 @@ await this.stateMachine.Apply("COMPLETE: This new fancy text that was published.
 // the state-machine finished in the COMPLETED-state.
 ```
 
+### State-forge coding
+As stated before, the _State-forge_ version is near identical to the _State_ version, though with a dependency specific state-forge service that can be used to insert the state-subject and apply actions to the provided state profile.
+
+#### Difference in subject
+The same subject as with the _State_ version approach can be used as this state-subject implements the _ExtendedStateSubject_ abstraction which again implements the _StateSubject_ abstraction, though a less detailed version of this subject that just implements the _StateSubject_ abstraction is enough. It is important that the state-subject has the identity property with the _StateId_ type.
+
+```C#
+public class Order : StateSubject { }  // Has the StateId property. The value of this property can be adjusted by the library components as it marked with a 'protected internal' modifier.
+```
+
+#### State-Forge and State
+The state-forge itself is a state-machine like structure that can be injected into a certain service/client to help in applying actions to the state-subject:
+```C#
+await stateForge
+    .Connect(subject)
+    .Apply(new DeliverOrderAction());
+```
+
+The state itself is returned by the invokation of the _Connect(...)_ method and provides the _Apply(...)_ method which accepts and applies the actions.
+
+#### State-forge registration and usage
+State-forge registration has a near identical setup as the _State_ version approach in registration, though instead of a state-reducer factory, a state-forge is being registered. One additional aspect has to be noted, which is the StateConfiguration. The one for the _ _State-forge_ version is called the StateForgeStateConfiguration as it is not compatible with the StateConfiguration of the _State_ version.
+```C#
+services.AddStateForge((b, _) => 
+{
+    b.Connect<Order>(builder =>
+    {
+        builder
+            .For(OrderStates.NewOrder, bldr => bldr.On<CheckOrderAction>().Handle<CheckNewOrderHandler>())
+            .For(new DeliveredOrderStateConfiguration())
+            .For(OrderStates.CheckedOrder, bldr =>
+            {
+                bldr.On<RemoveOrderAction>().Handle<RemoveCheckedOrderHandler>();
+                bldr.On<DeliverOrderAction>().Handle<DeliverCheckedOrderHandler>();
+                bldr.On<FailedOrderAction>().Handle<FailedCheckedOrderHandler>();
+            });
+    });
+});
+```
+
+```c#
+public class DeliveredOrderStateConfiguration : IStateForgeStateConfiguration<Order>
+{
+    public StateId StateId => OrderState.Delivered;
+    
+    public void Configure(IStateForgeStateBuilder<Order> builder)
+    {
+        builder.On<CancelOrderAction>().Handle<CancelDeliveredOrderHandler>();
+        builder.On<FailedOrderAction>().Handle<FailedDeliveredOrderHandler>();
+        builder.On<CompleteOrderAction>().Handle<CompleteDeliveredOrderHandler>();
+    }
+}
+```
 
 
 ## Reasons for using this library

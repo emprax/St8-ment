@@ -3,17 +3,12 @@ using St8Ment.States;
 
 namespace St8Ment.Tests.Integration.Utilities
 {
-    public class TesTSubject : IStateSubject<TesTSubject>
+    public class TesTSubject : ExtendedStateSubject<TesTSubject>
     {
-        public IState<TesTSubject> State { get; private set; }
-
         public TesTSubject() { }
 
-        public TesTSubject(IState<TesTSubject> state) => State = state;
+        public TesTSubject(StateId id) => this.StateId = id;
 
-        public void SetState(IState<TesTSubject> state) => State = state;
-
-        public Task<StateResponse> Apply<TAction>(TAction action) where TAction : class, IAction
-            => State.Apply(action);
+        public TesTSubject(IState<TesTSubject> state) => this.SetState(state);
     }
 }

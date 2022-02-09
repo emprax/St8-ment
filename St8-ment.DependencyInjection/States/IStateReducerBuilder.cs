@@ -3,7 +3,7 @@ using St8Ment.States;
 
 namespace St8Ment.DependencyInjection.States
 {
-    public interface IStateReducerBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
+    public interface IStateReducerBuilder<TSubject> where TSubject : ExtendedStateSubject<TSubject>
     {
         IStateReducerBuilder<TSubject> For(StateId stateId);
 

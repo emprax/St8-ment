@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Moq;
+﻿using Moq;
 using St8Ment.States;
 using St8Ment.Tests.Units.Utilities;
 using Xunit;
@@ -10,13 +7,13 @@ namespace St8Ment.Tests.Units.States
 {
     public class StateReducerTests
     {
-        private readonly IStateReducerCore<TestStateSubject> core;
-        private readonly IStateReducer<TestStateSubject> reducer;
+        private readonly IStateReducerCore<TestExtendedStateSubject> core;
+        private readonly IStateReducer<TestExtendedStateSubject> reducer;
 
         public StateReducerTests()
         {
-            this.core = Mock.Of<IStateReducerCore<TestStateSubject>>(MockBehavior.Strict);
-            this.reducer = new StateReducer<TestStateSubject>(this.core);
+            this.core = Mock.Of<IStateReducerCore<TestExtendedStateSubject>>(MockBehavior.Strict);
+            this.reducer = new StateReducer<TestExtendedStateSubject>(this.core);
         }
 
         [Fact]
@@ -24,7 +21,7 @@ namespace St8Ment.Tests.Units.States
         {
             // Arrange
             Mock.Get(this.core)
-                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
+                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
                 .Returns(false);
 
             // Act
@@ -39,10 +36,10 @@ namespace St8Ment.Tests.Units.States
         {
             // Arrange
             Mock.Get(this.core)
-                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
-                .Callback(new StateOutputCallback<TestStateSubject>((StateId _, out IActionProvider<TestStateSubject> provider) =>
+                .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
+                .Callback(new StateOutputCallback<TestExtendedStateSubject>((StateId _, out IActionProvider<TestExtendedStateSubject> provider) =>
                 {
-                    provider = Mock.Of<IActionProvider<TestStateSubject>>();
+                    provider = Mock.Of<IActionProvider<TestExtendedStateSubject>>();
                 }))
                 .Returns(true);
 
@@ -57,15 +54,14 @@ namespace St8Ment.Tests.Units.States
         public void SetStateShouldCreateNewStateObjectWithStateProvidedProperties()
         {
             // Arrange
-            var context = new TestStateSubject();
+            var context = new TestExtendedStateSubject();
 
             // Act
             this.reducer.SetState(TestStateId.New, context);
 
             // Assert
-            Assert.NotNull(context.State);
-            Assert.Equal(TestStateId.New, context.State.StateId);
-            Assert.Equal(context, context.State.Subject);
+            Assert.NotNull(context.StateId);
+            Assert.Equal(TestStateId.New, context.StateId);
         }
     }
 }

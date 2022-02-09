@@ -21,13 +21,13 @@ namespace St8Ment.Example.Console.States
                         })
                         .For(ExampleState.New, bldr =>
                         {
-                            bldr.On<PublishAction>().Handle<PublishActionHandler>()
-                                .On<RevokeAction>().Handle<RevokeActionHandler>();
+                            bldr.On<PublishAction>().Handle<PublishActionHandler>();
+                            bldr.On<RevokeAction>().Handle<RevokeActionHandler>();
                         })
                         .For(ExampleState.Revoked, bldr =>
                         {
-                            bldr.On<PublishAction>().Handle<PublishActionHandler>()
-                                .On<StartAction>().Handle<StartActionHandler>();
+                            bldr.On<PublishAction>().Handle<PublishActionHandler>();
+                            bldr.On<StartAction>().Handle<StartActionHandler>();
                         })
                         .For(ExampleState.Published, bldr =>
                         {

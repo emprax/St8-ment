@@ -2,13 +2,13 @@
 {
     public class ExampleState : StateId
     {
-        public static ExampleState Start = new ExampleState("START");
-        public static ExampleState New = new ExampleState("NEW");
-        public static ExampleState Updating = new ExampleState("UPDATING");
-        public static ExampleState Complete = new ExampleState("COMPLETE");
-        public static ExampleState Published = new ExampleState("PUBLISHED");
-        public static ExampleState Revoked = new ExampleState("REVOKED");
-        public static ExampleState Fault = new ExampleState("FAULT");
+        public static ExampleState Start = new("START");
+        public static ExampleState New = new("NEW");
+        public static ExampleState Updating = new("UPDATING");
+        public static ExampleState Complete = new("COMPLETE");
+        public static ExampleState Published = new("PUBLISHED");
+        public static ExampleState Revoked = new("REVOKED");
+        public static ExampleState Fault = new("FAULT");
 
         private ExampleState(string name) : base(name) { }
     }

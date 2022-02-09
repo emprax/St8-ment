@@ -24,13 +24,13 @@ namespace St8Ment.Tests.Integration.States
                         .For(new NewStateConfiguration())
                         .For(TestStateId.Processing, bldr => 
                         {
-                            bldr.On<Test3Action>().Handle<Test3ActionHandler>()
-                                .On<Test2Action>().Handle<Test2ActionHandler>();
+                            bldr.On<Test3Action>().Handle<Test3ActionHandler>();
+                            bldr.On<Test2Action>().Handle<Test2ActionHandler>();
                         })
-                        .For(TestStateId.Complete, bldr => 
+                        .For(TestStateId.Complete, bldr =>
                         {
-                            bldr.On<Test1Action>().Handle<Test1ActionHandler>()
-                                .On<Test2Action>().Handle<Test2ActionHandler>();
+                            bldr.On<Test1Action>().Handle<Test1ActionHandler>();
+                            bldr.On<Test2Action>().Handle<Test2ActionHandler>();
                         });
                 })
                 .BuildServiceProvider();
@@ -42,9 +42,8 @@ namespace St8Ment.Tests.Integration.States
 
             public void Configure(IStateBuilder<TesTSubject> builder)
             {
-                builder
-                    .On<Test1Action>().Handle<Test1ActionHandler>()
-                    .On<Test2Action>().Handle<Test2ActionHandler>();
+                builder.On<Test1Action>().Handle<Test1ActionHandler>();
+                builder.On<Test2Action>().Handle<Test2ActionHandler>();
             }
         }
 
@@ -63,7 +62,7 @@ namespace St8Ment.Tests.Integration.States
             // Assert
             Assert.Equal(StateResponse.Success.Id, result.Id);
             Assert.Equal(StateResponse.Success.Name, result.Name);
-            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.StateId.Name);
         }
 
         [Fact]
@@ -86,7 +85,7 @@ namespace St8Ment.Tests.Integration.States
             Assert.Equal(StateResponse.NoMatchingAction.Id, result2.Id);
             Assert.Equal(StateResponse.NoMatchingAction.Name, result2.Name);
 
-            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.StateId.Name);
         }
 
         [Fact]
@@ -100,13 +99,13 @@ namespace St8Ment.Tests.Integration.States
 
             // Act & Assert
             var result1 = await context.Apply(new Test1Action());
-            Assert.Equal(TestStateId.Processing.Name, context.State.StateId.Name);
+            Assert.Equal(TestStateId.Processing.Name, context.StateId.Name);
 
             var result2 = await context.Apply(new Test3Action());
-            Assert.Equal(TestStateId.Complete.Name, context.State.StateId.Name);
+            Assert.Equal(TestStateId.Complete.Name, context.StateId.Name);
 
             var result3 = await context.Apply(new Test2Action());
-            Assert.Equal(TestStateId.Fault.Name, context.State.StateId.Name);
+            Assert.Equal(TestStateId.Fault.Name, context.StateId.Name);
 
             Assert.Equal(StateResponse.Success.Id, result1.Id);
             Assert.Equal(StateResponse.Success.Name, result1.Name);

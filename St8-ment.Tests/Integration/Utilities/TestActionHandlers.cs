@@ -10,10 +10,12 @@ namespace St8Ment.Tests.Integration.Utilities
 
         public Test1ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
 
-        public Task<StateId> Execute(Test1Action action, IStateView<TesTSubject> state)
+        public Task Execute(Test1Action action, IStateHandle<TesTSubject> state)
         {
             logger.LogInformation("Test1-Action");
-            return Task.FromResult<StateId>(TestStateId.Processing);
+            state.Transition(TestStateId.Processing);
+
+            return Task.CompletedTask;
         }
     }
 
@@ -23,10 +25,12 @@ namespace St8Ment.Tests.Integration.Utilities
 
         public Test2ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
 
-        public Task<StateId> Execute(Test2Action action, IStateView<TesTSubject> state)
+        public Task Execute(Test2Action action, IStateHandle<TesTSubject> state)
         {
             logger.LogInformation("Test2-Action");
-            return Task.FromResult<StateId>(TestStateId.Fault);
+            state.Transition(TestStateId.Fault);
+
+            return Task.CompletedTask;
         }
     }
 
@@ -36,10 +40,12 @@ namespace St8Ment.Tests.Integration.Utilities
 
         public Test3ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
 
-        public Task<StateId> Execute(Test3Action action, IStateView<TesTSubject> state)
+        public Task Execute(Test3Action action, IStateHandle<TesTSubject> state)
         {
             logger.LogInformation("Test3-Action");
-            return Task.FromResult<StateId>(TestStateId.Complete);
+            state.Transition(TestStateId.Complete);
+
+            return Task.CompletedTask;
         }
     }
 }

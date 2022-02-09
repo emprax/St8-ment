@@ -2,10 +2,10 @@
 
 namespace St8Ment.DependencyInjection.States
 {
-    public interface IActionBuilder<TAction, TSubject>
+    public interface IActionBuilder<out TAction, TSubject>
         where TAction : class, IAction
-        where TSubject : class, IStateSubject<TSubject>
+        where TSubject : ExtendedStateSubject<TSubject>
     {
-        IStateBuilder<TSubject> Handle<THandler>() where THandler : class, IActionHandler<TAction, TSubject>;
+        void Handle<THandler>() where THandler : class, IActionHandler<TAction, TSubject>;
     }
 }

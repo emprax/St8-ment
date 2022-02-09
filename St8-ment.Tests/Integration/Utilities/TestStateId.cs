@@ -2,10 +2,10 @@
 {
     public class TestStateId : StateId
     {
-        public static readonly TestStateId New = new TestStateId(1, "NEW");
-        public static readonly TestStateId Processing = new TestStateId(2, "PROCESSING");
-        public static readonly TestStateId Complete = new TestStateId(3, "COMPLETE");
-        public static readonly TestStateId Fault = new TestStateId(4, "FAULT");
+        public static readonly TestStateId New = new(1, "NEW");
+        public static readonly TestStateId Processing = new(2, "PROCESSING");
+        public static readonly TestStateId Complete = new(3, "COMPLETE");
+        public static readonly TestStateId Fault = new(4, "FAULT");
 
         private TestStateId(uint id, string name) : base(name)
         {

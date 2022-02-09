@@ -2,7 +2,7 @@
 
 namespace St8Ment.DependencyInjection.States
 {
-    public interface IStateConfiguration<TSubject> where TSubject : class, IStateSubject<TSubject>
+    public interface IStateConfiguration<TSubject> where TSubject : ExtendedStateSubject<TSubject>
     {
         StateId StateId { get; }
 

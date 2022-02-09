@@ -1,6 +1,6 @@
 ﻿namespace St8Ment.States
 {
-    public class StateReducer<TSubject> : IStateReducer<TSubject> where TSubject : class, IStateSubject<TSubject>
+    public class StateReducer<TSubject> : IStateReducer<TSubject> where TSubject : ExtendedStateSubject<TSubject>
     {
         private readonly IStateReducerCore<TSubject> core;
 

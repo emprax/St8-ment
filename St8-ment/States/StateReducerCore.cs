@@ -2,7 +2,7 @@
 
 namespace St8Ment.States
 {
-    public class StateReducerCore<TSubject> : IStateReducerCore<TSubject> where TSubject : class, IStateSubject<TSubject>
+    public class StateReducerCore<TSubject> : IStateReducerCore<TSubject> where TSubject : ExtendedStateSubject<TSubject>
     {
         private readonly ConcurrentDictionary<StateId, IActionProvider<TSubject>> states;
 

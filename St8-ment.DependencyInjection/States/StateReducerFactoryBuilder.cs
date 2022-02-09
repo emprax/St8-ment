@@ -6,13 +6,13 @@ using St8Ment.States;
 
 namespace St8Ment.DependencyInjection.States
 {
-    public class StateReducerFactoryBuilder<TKey, TSubject> : IStateReducerFactoryBuilder<TKey, TSubject> where TSubject : class, IStateSubject<TSubject>
+    public class StateReducerFactoryBuilder<TKey, TSubject> : IStateReducerFactoryBuilder<TKey, TSubject> where TSubject : ExtendedStateSubject<TSubject>
     {
-        private readonly IDictionary<TKey, Func<IServiceProvider, IStateReducerCore<TSubject>>> stateReducers;
+        private readonly IDictionary<TKey, Func<DependencyProvider, IStateReducerCore<TSubject>>> stateReducers;
 
         public StateReducerFactoryBuilder()
         {
-            this.stateReducers = new ConcurrentDictionary<TKey, Func<IServiceProvider, IStateReducerCore<TSubject>>>();
+            this.stateReducers = new ConcurrentDictionary<TKey, Func<DependencyProvider, IStateReducerCore<TSubject>>>();
         }
 
         public IStateReducerFactoryBuilder<TKey, TSubject> AddStateReducer(TKey key, Action<IStateReducerBuilder<TSubject>> configuration)
@@ -29,11 +29,11 @@ namespace St8Ment.DependencyInjection.States
             return this;
         }
 
-        internal ConcurrentDictionary<TKey, Func<IStateReducerCore<TSubject>>> Build(IServiceProvider provider)
+        internal ConcurrentDictionary<TKey, Func<DependencyProvider, IStateReducerCore<TSubject>>> Build()
         {
-            return new ConcurrentDictionary<TKey, Func<IStateReducerCore<TSubject>>>(this.stateReducers.ToDictionary(
+            return new ConcurrentDictionary<TKey, Func<DependencyProvider, IStateReducerCore<TSubject>>>(this.stateReducers.ToDictionary(
                 k => k.Key,
-                k => new Func<IStateReducerCore<TSubject>>(() => k.Value.Invoke(provider))));
+                k => new Func<DependencyProvider, IStateReducerCore<TSubject>>(p => k.Value.Invoke(p))));
         }
 
         private void Remove(TKey key)

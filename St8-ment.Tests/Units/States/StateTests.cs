@@ -8,21 +8,21 @@ namespace St8Ment.Tests.Units.States
 {
     public class StateTests
     {
-        private readonly IStateReducer<TestStateSubject> reducer;
-        private readonly IActionProvider<TestStateSubject> provider;
-        private readonly IActionHandler<TestAction, TestStateSubject> handler;
-        private readonly TestStateSubject context;
+        private readonly IStateReducer<TestExtendedStateSubject> reducer;
+        private readonly IActionProvider<TestExtendedStateSubject> provider;
+        private readonly IActionHandler<TestAction, TestExtendedStateSubject> handler;
+        private readonly TestExtendedStateSubject context;
 
-        private readonly IState<TestStateSubject> state;
+        private readonly IState<TestExtendedStateSubject> state;
 
         public StateTests()
         {
-            this.reducer = Mock.Of<IStateReducer<TestStateSubject>>(MockBehavior.Strict);
-            this.provider = Mock.Of<IActionProvider<TestStateSubject>>(MockBehavior.Strict);
-            this.handler = Mock.Of<IActionHandler<TestAction, TestStateSubject>>(MockBehavior.Strict);
-            this.context = new TestStateSubject();
-            
-            this.state = new State<TestStateSubject>(TestStateId.New, this.context, this.reducer);
+            this.reducer = Mock.Of<IStateReducer<TestExtendedStateSubject>>(MockBehavior.Strict);
+            this.provider = Mock.Of<IActionProvider<TestExtendedStateSubject>>(MockBehavior.Strict);
+            this.handler = Mock.Of<IActionHandler<TestAction, TestExtendedStateSubject>>(MockBehavior.Strict);
+
+            this.context = new TestExtendedStateSubject(TestStateId.New);
+            this.state = new State<TestExtendedStateSubject>(TestStateId.New, this.context, this.reducer);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace St8Ment.Tests.Units.States
             var action = new TestAction(nameof(ApplyShouldReturnStateActionsNotFoundResponseWhenReducerReturnsFalse));
 
             Mock.Get(this.reducer)
-                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
+                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
                 .Returns(false);
 
             // Act
@@ -49,15 +49,15 @@ namespace St8Ment.Tests.Units.States
             var action = new TestAction(nameof(ApplyShouldReturnNoMatchingActionResponseWhenProviderReturnsFalse));
 
             Mock.Get(this.reducer)
-                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
-                .Callback(new StateOutputCallback<TestStateSubject>((StateId id, out IActionProvider<TestStateSubject> provider) =>
+                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
+                .Callback(new StateOutputCallback<TestExtendedStateSubject>((StateId id, out IActionProvider<TestExtendedStateSubject> provider) =>
                 {
                     provider = this.provider;
                 }))
                 .Returns(true);
 
             Mock.Get(this.provider)
-                .Setup(p => p.TryGet(out It.Ref<IActionHandler<TestAction, TestStateSubject>>.IsAny))
+                .Setup(p => p.TryGet(out It.Ref<IActionHandler<TestAction, TestExtendedStateSubject>>.IsAny))
                 .Returns(false);
 
             // Act
@@ -71,27 +71,28 @@ namespace St8Ment.Tests.Units.States
         public async Task ApplyShouldReturnSuccessResponseWhenActionHandlerWasSuccessfullyProcessed()
         {
             // Arrange
-            var action = new TestAction(nameof(ApplyShouldReturnNoMatchingActionResponseWhenProviderReturnsFalse));
+            var action = new TestAction(nameof(ApplyShouldReturnSuccessResponseWhenActionHandlerWasSuccessfullyProcessed));
 
             Mock.Get(this.reducer)
-                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestStateSubject>>.IsAny))
-                .Callback(new StateOutputCallback<TestStateSubject>((StateId id, out IActionProvider<TestStateSubject> provider) =>
+                .Setup(r => r.TryGetProvider(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
+                .Callback(new StateOutputCallback<TestExtendedStateSubject>((StateId id, out IActionProvider<TestExtendedStateSubject> provider) =>
                 {
                     provider = this.provider;
                 }))
                 .Returns(true);
 
             Mock.Get(this.provider)
-                .Setup(p => p.TryGet(out It.Ref<IActionHandler<TestAction, TestStateSubject>>.IsAny))
-                .Callback(new ActionOutputCallback<TestAction, TestStateSubject>((out IActionHandler<TestAction, TestStateSubject> handler) =>
+                .Setup(p => p.TryGet(out It.Ref<IActionHandler<TestAction, TestExtendedStateSubject>>.IsAny))
+                .Callback(new ActionOutputCallback<TestAction, TestExtendedStateSubject>((out IActionHandler<TestAction, TestExtendedStateSubject> handler) =>
                 { 
                     handler = this.handler;
                 }))
                 .Returns(true);
 
             Mock.Get(this.handler)
-                .Setup(h => h.Execute(action, It.Is<IStateView<TestStateSubject>>(x => x.StateId == TestStateId.New && x.Subject == this.context)))
-                .ReturnsAsync(TestStateId.Processing);
+                .Setup(h => h.Execute(action, It.Is<IStateHandle<TestExtendedStateSubject>>(
+                    x => x.Subject.StateId.Name.Equals(TestStateId.New.Name) && x.Subject == this.context)))
+                .Returns(Task.CompletedTask);
 
             Mock.Get(this.reducer)
                 .Setup(r => r.SetState(It.Is<StateId>(x => x.Name == TestStateId.Processing.Name), this.context));

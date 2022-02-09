@@ -7,21 +7,16 @@ namespace St8Ment.DependencyInjection.States
 {
     internal class ActionBuilder<TAction, TSubject> : IActionBuilder<TAction, TSubject>
         where TAction : class, IAction
-        where TSubject : class, IStateSubject<TSubject>
+        where TSubject : ExtendedStateSubject<TSubject>
     {
-        private readonly ConcurrentDictionary<string, Func<IServiceProvider, object>> actions;
-        private readonly IStateBuilder<TSubject> builder;
+        private readonly ConcurrentDictionary<string, Func<DependencyProvider, object>> actions;
+        
+        internal ActionBuilder(ConcurrentDictionary<string, Func<DependencyProvider, object>> actions) => this.actions = actions;
 
-        internal ActionBuilder(ConcurrentDictionary<string, Func<IServiceProvider, object>> actions, IStateBuilder<TSubject> builder)
+        public void Handle<THandler>() where THandler : class, IActionHandler<TAction, TSubject>
         {
-            this.actions = actions;
-            this.builder = builder;
-        }
-
-        public IStateBuilder<TSubject> Handle<THandler>() where THandler : class, IActionHandler<TAction, TSubject>
-        {
-            var key = typeof(TAction).FullName;
-            var factory = new Func<IServiceProvider, object>(provider =>
+            var key = typeof(TAction).FullName ?? string.Empty;
+            var factory = new Func<DependencyProvider, object>(provider =>
             {
                 var constructor = typeof(THandler)?
                     .GetConstructors()?
@@ -29,14 +24,13 @@ namespace St8Ment.DependencyInjection.States
 
                 var parameters = constructor?
                     .GetParameters()?
-                    .Select(p => provider.GetService(p?.ParameterType))?
+                    .Select(p => provider.Invoke(p?.ParameterType))?
                     .ToArray();
 
                 return constructor?.Invoke(parameters) as THandler;
             });
 
             this.actions.AddOrUpdate(key, k => factory, (k, _) => factory);
-            return this.builder;
         }
     }
 }

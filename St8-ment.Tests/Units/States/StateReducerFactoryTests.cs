@@ -10,19 +10,19 @@ namespace St8Ment.Tests.Units.States
 {
     public class StateReducerFactoryTests
     {
-        private readonly ConcurrentDictionary<string, Func<IStateReducerCore<TestStateSubject>>> reducers;
-        private readonly IStateReducerCore<TestStateSubject> reducer;
-        private readonly IStateReducerFactory<string, TestStateSubject> factory;
+        private readonly ConcurrentDictionary<string, Func<DependencyProvider, IStateReducerCore<TestExtendedStateSubject>>> reducers;
+        private readonly IStateReducerCore<TestExtendedStateSubject> reducer;
+        private readonly IStateReducerFactory<string, TestExtendedStateSubject> factory;
 
         public StateReducerFactoryTests()
         {
-            this.reducer = Mock.Of<IStateReducerCore<TestStateSubject>>(MockBehavior.Strict);
-            this.reducers = new ConcurrentDictionary<string, Func<IStateReducerCore<TestStateSubject>>>(new[]
+            this.reducer = Mock.Of<IStateReducerCore<TestExtendedStateSubject>>(MockBehavior.Strict);
+            this.reducers = new ConcurrentDictionary<string, Func<DependencyProvider, IStateReducerCore<TestExtendedStateSubject>>>(new[]
             {
-                new KeyValuePair<string, Func<IStateReducerCore<TestStateSubject>>>("TEST", () => this.reducer)
+                new KeyValuePair<string, Func<DependencyProvider, IStateReducerCore<TestExtendedStateSubject>>>("TEST", _ => this.reducer)
             });
 
-            this.factory = new StateReducerFactory<string, TestStateSubject>(this.reducers);
+            this.factory = new StateReducerFactory<string, TestExtendedStateSubject>(this.reducers, _ => null);
         }
 
         [Fact]

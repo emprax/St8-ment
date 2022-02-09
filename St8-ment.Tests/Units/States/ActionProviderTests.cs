@@ -10,9 +10,9 @@ namespace St8Ment.Tests.Units.States
 {
     public class ActionProviderTests
     {
-        private readonly ConcurrentDictionary<string, Func<object>> handlers;
-        private readonly IActionHandler<TestAction, TestStateSubject> handler;
-        private readonly IActionProvider<TestStateSubject> actionProvider;
+        private readonly ConcurrentDictionary<string, Func<DependencyProvider, object>> handlers;
+        private readonly IActionHandler<TestAction, TestExtendedStateSubject> handler;
+        private readonly IActionProvider<TestExtendedStateSubject> actionProvider;
 
         public class NoneExistingAction : IAction { }
 
@@ -24,16 +24,16 @@ namespace St8Ment.Tests.Units.States
 
         public ActionProviderTests()
         {
-            this.handler = Mock.Of<IActionHandler<TestAction, TestStateSubject>>(MockBehavior.Strict);
-            this.handlers = new ConcurrentDictionary<string, Func<object>>(new[]
+            this.handler = Mock.Of<IActionHandler<TestAction, TestExtendedStateSubject>>(MockBehavior.Strict);
+            this.handlers = new ConcurrentDictionary<string, Func<DependencyProvider, object>>(new[]
             {
-                new KeyValuePair<string, Func<object>>(typeof(TestAction).FullName, () => this.handler),
-                new KeyValuePair<string, Func<object>>(typeof(NullAction).FullName, null),
-                new KeyValuePair<string, Func<object>>(typeof(DummyAction).FullName, () => null),
-                new KeyValuePair<string, Func<object>>(typeof(OtherAction).FullName, () => "hello")
+                new KeyValuePair<string, Func<DependencyProvider, object>>(typeof(TestAction).FullName, _ => this.handler),
+                new KeyValuePair<string, Func<DependencyProvider, object>>(typeof(NullAction).FullName, null),
+                new KeyValuePair<string, Func<DependencyProvider, object>>(typeof(DummyAction).FullName, _ => null),
+                new KeyValuePair<string, Func<DependencyProvider, object>>(typeof(OtherAction).FullName, _ => "hello")
             });
 
-            this.actionProvider = new ActionProvider<TestStateSubject>(this.handlers);
+            this.actionProvider = new ActionProvider<TestExtendedStateSubject>(this.handlers, _ => null);
         }
 
         [Fact]
