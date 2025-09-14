@@ -16,10 +16,8 @@ public class StateCase
             {
                 builder
                     .State(ExampleState.Fault)
-                    .State(ExampleState.Start, bldr =>
-                    {
-                        bldr.Action<StartAction, StartActionHandler>();
-                    })
+                    .State(ExampleState.Start, bldr => bldr.Action<StartAction, StartActionHandler>())
+                    .State(ExampleState.Published, bldr => bldr.Action<RevokeAction, RevokeActionHandler>())
                     .State(ExampleState.New, bldr =>
                     {
                         bldr.Action<PublishAction, PublishActionHandler>();
@@ -29,10 +27,6 @@ public class StateCase
                     {
                         bldr.Action<PublishAction, PublishActionHandler>();
                         bldr.Action<StartAction, StartActionHandler>();
-                    })
-                    .State(ExampleState.Published, bldr =>
-                    {
-                        bldr.Action<RevokeAction, RevokeActionHandler>();
                     });
             })
             .BuildServiceProvider();
