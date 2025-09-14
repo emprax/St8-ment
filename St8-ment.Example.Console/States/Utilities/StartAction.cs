@@ -1,24 +1,24 @@
-﻿using System.Threading;
+﻿using St8Ment.States.Abstractions.Core;
+using System.Threading;
 using System.Threading.Tasks;
-using St8Ment.States;
 
 namespace St8Ment.Example.Console.States.Utilities;
 
-public class StartAction : IAction
+public class StartAction : IAction<ExampleContext>
 {
     public StartAction(string text) => this.Text = text;
 
     public string Text { get; }
 }
 
-public class StartActionHandler : IActionHandler<StartAction, ExampleContext>
+public class StartActionHandler : IActionHandler<ExampleContext, StartAction>
 {
-    public Task Execute(StartAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
+    public async Task ExecuteAsync(StartAction action, IStateHandle<ExampleContext> state, CancellationToken cancellationToken)
     {
-        System.Console.WriteLine("  - Action arrived in start-action-handler. Action content: {0}.", action?.Text);
+        await System.Console.Out.WriteLineAsync($"  - Action arrived in start-action-handler. Action content: {action?.Text}.");
         if (string.IsNullOrWhiteSpace(action?.Text))
         {
-            System.Console.WriteLine("    + Faulted result");
+            await System.Console.Out.WriteLineAsync("    + Faulted result");
             state.Transition(ExampleState.Fault);
 
             return;
@@ -26,20 +26,20 @@ public class StartActionHandler : IActionHandler<StartAction, ExampleContext>
 
         if (action.Text.Contains("Revoke"))
         {
-            System.Console.WriteLine("    + Revoked result");
+            await System.Console.Out.WriteLineAsync("    + Revoked result");
             state.Transition(ExampleState.Revoked);
 
             return;
         }
 
-        System.Console.WriteLine("    + Started result");
+        await System.Console.Out.WriteLineAsync("    + Started result");
         state.Transition(ExampleState.New);
-    });
+    }
 }
 
-public class RevokeActionHandler : IActionHandler<RevokeAction, ExampleContext>
+public class RevokeActionHandler : IActionHandler<ExampleContext, RevokeAction>
 {
-    public Task Execute(RevokeAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
+    public Task ExecuteAsync(RevokeAction action, IStateHandle<ExampleContext> state, CancellationToken cancellationToken) => Task.Run(() =>
     {
         System.Console.WriteLine(
             "  - Revoke action arrived in start-action-handler. Action dispatched at: {0} for reason: {1}.",
@@ -59,9 +59,9 @@ public class RevokeActionHandler : IActionHandler<RevokeAction, ExampleContext>
     });
 }
 
-public class PublishActionHandler : IActionHandler<PublishAction, ExampleContext>
+public class PublishActionHandler : IActionHandler<ExampleContext, PublishAction>
 {
-    public Task Execute(PublishAction action, IStateHandle<ExampleContext> state) => Task.Run(() =>
+    public Task ExecuteAsync(PublishAction action, IStateHandle<ExampleContext> state, CancellationToken cancellationToken) => Task.Run(() =>
     {
         System.Console.WriteLine("  - Publish action arrived in start-action-handler. Action dispatched at: {0}.", action?.At);
         System.Console.WriteLine("    + Published result");

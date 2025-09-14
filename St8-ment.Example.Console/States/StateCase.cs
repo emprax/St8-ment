@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using St8Ment.DependencyInjection.States;
 using St8Ment.Example.Console.States.Utilities;
-using St8Ment.States;
+using St8Ment.States.Abstractions.Factories;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace St8Ment.Example.Console.States;
 
@@ -11,39 +12,39 @@ public class StateCase
     public static async Task Execute()
     {
         var provider = new ServiceCollection()
-            .AddStateReducer<ExampleContext>((builder, _) =>
+            .AddStateReducerFactory<ExampleContext>(builder =>
             {
                 builder
-                    .For(ExampleState.Fault)
-                    .For(ExampleState.Start, bldr =>
+                    .State(ExampleState.Fault)
+                    .State(ExampleState.Start, bldr =>
                     {
-                        bldr.On<StartAction>().Handle<StartActionHandler>();
+                        bldr.Action<StartAction, StartActionHandler>();
                     })
-                    .For(ExampleState.New, bldr =>
+                    .State(ExampleState.New, bldr =>
                     {
-                        bldr.On<PublishAction>().Handle<PublishActionHandler>();
-                        bldr.On<RevokeAction>().Handle<RevokeActionHandler>();
+                        bldr.Action<PublishAction, PublishActionHandler>();
+                        bldr.Action<RevokeAction, RevokeActionHandler>();
                     })
-                    .For(ExampleState.Revoked, bldr =>
+                    .State(ExampleState.Revoked, bldr =>
                     {
-                        bldr.On<PublishAction>().Handle<PublishActionHandler>();
-                        bldr.On<StartAction>().Handle<StartActionHandler>();
+                        bldr.Action<PublishAction, PublishActionHandler>();
+                        bldr.Action<StartAction, StartActionHandler>();
                     })
-                    .For(ExampleState.Published, bldr =>
+                    .State(ExampleState.Published, bldr =>
                     {
-                        bldr.On<RevokeAction>().Handle<RevokeActionHandler>();
+                        bldr.Action<RevokeAction, RevokeActionHandler>();
                     });
             })
             .BuildServiceProvider();
 
-        var reducer = provider.GetRequiredService<IStateReducer<ExampleContext>>();
-        var context = new ExampleContext();
+        var context = new ExampleContext(ExampleState.Start);
+        var reducer = provider
+            .GetRequiredService<IStateReducerFactory<ExampleContext>>()
+            .Create(context);
 
-        reducer.SetState(ExampleState.Start, context);
-
-        await context.Apply(new StartAction("Hello"));
-        await context.Apply(new PublishAction());
-        await context.Apply(new RevokeAction("Reasons"));
-        await context.Apply(new PublishAction());
+        await reducer.ExecuteAsync(new StartAction("Hello"), CancellationToken.None);
+        await reducer.ExecuteAsync(new PublishAction(), CancellationToken.None);
+        await reducer.ExecuteAsync(new RevokeAction("Reasons"), CancellationToken.None);
+        await reducer.ExecuteAsync(new PublishAction(), CancellationToken.None);
     }
 }

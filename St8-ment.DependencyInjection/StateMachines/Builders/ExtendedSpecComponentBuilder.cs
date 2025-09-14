@@ -1,4 +1,5 @@
-﻿using St8Ment.StateMachines;
+﻿using St8Ment.DependencyInjection.StateMachines.Abstractions;
+using St8Ment.StateMachines;
 using St8Ment.StateMachines.Components;
 using System;
 using System.Linq;
@@ -46,7 +47,7 @@ internal class ExtendedSpecComponentBuilder<TInput> : IExtendedSpecComponentBuil
 
             var parameters = constructor?
                 .GetParameters()?
-                .Select(p => provider.Get(p.ParameterType))?
+                .Select(p => provider.Create(p.ParameterType))?
                 .ToArray();
 
             return constructor?.Invoke(parameters) as ITransitionCallback<TInput>;

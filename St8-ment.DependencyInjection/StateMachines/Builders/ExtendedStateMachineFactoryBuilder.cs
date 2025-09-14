@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using St8Ment.DependencyInjection.StateMachines.Abstractions;
 using St8Ment.StateMachines;
 using St8Ment.StateMachines.Components;
 

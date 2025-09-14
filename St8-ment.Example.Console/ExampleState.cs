@@ -1,6 +1,6 @@
 ﻿namespace St8Ment.Example.Console;
 
-public class ExampleState
+public static class ExampleState
 {
     public readonly static StateId Start = new("START");
     public readonly static StateId New = new("NEW");

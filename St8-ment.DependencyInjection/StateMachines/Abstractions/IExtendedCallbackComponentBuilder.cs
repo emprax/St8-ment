@@ -1,4 +1,4 @@
-﻿namespace St8Ment.DependencyInjection.StateMachines.Builders;
+﻿namespace St8Ment.DependencyInjection.StateMachines.Abstractions;
 
 public interface IExtendedCallbackComponentBuilder<TInput>
 {

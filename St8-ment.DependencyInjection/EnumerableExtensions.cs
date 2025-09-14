@@ -20,7 +20,7 @@ public static class EnumerableExtensions
     /// <typeparam name="TValue">Type of the dictionary value.</typeparam>
     /// <param name="enumerable">The to-be converted collection containing the keys and values for the concurrent-dictionary.</param>
     /// <returns>The resulting concurrent-dictionary.</returns>
-    public static ConcurrentDictionary<TKey, TValue> ToConcurrentDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+    public static ConcurrentDictionary<TKey, TValue> ToConcurrentDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable) where TKey : notnull
     {
         var items = enumerable.ToList();
         var dictionary = new ConcurrentDictionary<TKey, TValue>(Environment.ProcessorCount, items.Count);

@@ -1,10 +1,12 @@
-﻿using St8ment.DependencyInjection.Abstractions;
+﻿using St8Ment.DependencyInjection.States.Abstractions;
 using St8Ment.States.Abstractions.Core;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace St8ment.DependencyInjection.Builders;
+namespace St8Ment.DependencyInjection.States.Builders;
 
 #pragma warning disable IDE0290 // Use primary constructor
-public class ActionFactoryHandler<TSubject, TAction> : IActionHandler<TSubject, TAction>
+internal class ActionFactoryHandler<TSubject, TAction> : IActionHandler<TSubject, TAction>
     where TSubject : class, IStateSubject<TSubject>
     where TAction : IAction<TSubject>
 {

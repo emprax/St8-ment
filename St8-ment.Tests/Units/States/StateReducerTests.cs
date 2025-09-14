@@ -1,66 +1,91 @@
 ﻿using Moq;
+using St8Ment;
 using St8Ment.States;
+using St8Ment.States.Abstractions.Core;
+using St8Ment.States.Core;
 using St8Ment.Tests.Units.Utilities;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace St8Ment.Tests.Units.States;
 
 public class StateReducerTests
 {
-    private readonly IStateReducerCore<TestExtendedStateSubject> core;
-    private readonly IStateReducer<TestExtendedStateSubject> reducer;
+    private readonly Mock<IActionHandler<TestStateSubject, TestAction>> handler;
+    private readonly Mock<IStateContextProvider<TestStateSubject>> provider;
+    private readonly Mock<IStateContext<TestStateSubject>> context;
+    private readonly StateReducer<TestStateSubject> reducer;
 
     public StateReducerTests()
     {
-        this.core = Mock.Of<IStateReducerCore<TestExtendedStateSubject>>(MockBehavior.Strict);
-        this.reducer = new StateReducer<TestExtendedStateSubject>(this.core);
+        this.provider = new(MockBehavior.Strict);
+        this.context = new(MockBehavior.Strict);
+        this.handler = new(MockBehavior.Strict);
+        this.reducer = new(this.provider.Object, new(new StateId("OPEN")));
     }
 
     [Fact]
-    public void TryGetProviderShouldReturnNullWhenStateIdIsNotInCollection()
+    public async Task ShouldTransitionFromState()
     {
         // Arrange
-        Mock.Get(this.core)
-            .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
-            .Returns(false);
+        this.provider
+            .Setup(x => x.Get(It.Is<StateId>(y => y.Value == "OPEN")))
+            .Returns(this.context.Object);
+
+        this.context
+            .Setup(x => x.Get<TestAction>())
+            .Returns(this.handler.Object);
+
+        this.handler
+            .Setup(x => x.ExecuteAsync(
+                It.IsAny<TestAction>(),
+                It.IsAny<IStateHandle<TestStateSubject>>(),
+                It.IsAny<CancellationToken>()))
+            .Callback<TestAction, IStateHandle<TestStateSubject>, CancellationToken>((_, x, _) => x.Transition(new StateId("CLOSED")))
+            .Returns(Task.CompletedTask);
 
         // Act
-        this.reducer.TryGetProvider(TestStateId.New, out var provider);
+        var result = await this.reducer.ExecuteAsync(new TestAction("ACTION"), CancellationToken.None);
 
         // Assert
-        Assert.Null(provider);
+        Assert.Equal(StateResponseType.SUCCESS, result.Type);
+        Assert.Equal("CLOSED", this.reducer.Subject.State.Id.Value);
     }
 
     [Fact]
-    public void TryGetProviderShouldReturnProvider()
+    public async Task ShouldReturnNoStateWhenContextNotFound()
     {
         // Arrange
-        Mock.Get(this.core)
-            .Setup(c => c.TryGet(TestStateId.New, out It.Ref<IActionProvider<TestExtendedStateSubject>>.IsAny))
-            .Callback(new StateOutputCallback<TestExtendedStateSubject>((StateId _, out IActionProvider<TestExtendedStateSubject> provider) =>
-            {
-                provider = Mock.Of<IActionProvider<TestExtendedStateSubject>>();
-            }))
-            .Returns(true);
+        this.provider
+            .Setup(x => x.Get(It.Is<StateId>(y => y.Value == "OPEN")))
+            .Returns(default(IStateContext<TestStateSubject>));
 
         // Act
-        this.reducer.TryGetProvider(TestStateId.New, out var provider);
+        var result = await this.reducer.ExecuteAsync(new TestAction("ACTION"), CancellationToken.None);
 
         // Assert
-        Assert.NotNull(provider);
+        Assert.Equal(StateResponseType.NOSTATE, result.Type);
+        Assert.Equal("OPEN", this.reducer.Subject.State.Id.Value);
     }
 
     [Fact]
-    public void SetStateShouldCreateNewStateObjectWithStateProvidedProperties()
+    public async Task ShouldReturnNoActionWhenHandlerNotFound()
     {
         // Arrange
-        var context = new TestExtendedStateSubject();
+        this.provider
+            .Setup(x => x.Get(It.Is<StateId>(y => y.Value == "OPEN")))
+            .Returns(this.context.Object);
+
+        this.context
+            .Setup(x => x.Get<TestAction>())
+            .Returns(default(IActionHandler<TestStateSubject, TestAction>));
 
         // Act
-        this.reducer.SetState(TestStateId.New, context);
+        var result = await this.reducer.ExecuteAsync(new TestAction("ACTION"), CancellationToken.None);
 
         // Assert
-        Assert.NotNull(context.StateId);
-        Assert.Equal(TestStateId.New, context.StateId);
+        Assert.Equal(StateResponseType.NOACTION, result.Type);
+        Assert.Equal("OPEN", this.reducer.Subject.State.Id.Value);
     }
 }

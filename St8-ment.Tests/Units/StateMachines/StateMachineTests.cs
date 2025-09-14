@@ -63,7 +63,7 @@ public class StateMachineTests
 
         // Assert
         Assert.Equal(StateMachineResponse.UnknownState.Id, result.Id);
-        Assert.Equal($"The provided state identification could not find the corresponding state. Provided state-id: {state.Name}", result.Message);
+        Assert.Equal($"The provided state identification could not find the corresponding state. Provided state-id: {state.Value}", result.Message);
     }
 
     [Fact]
@@ -90,9 +90,9 @@ public class StateMachineTests
         var result = await new StateMachine(this.core).Apply(action);
 
         // Assert
-        Assert.Equal(TestStateId.Processing.Name, resultState.Name);
+        Assert.Equal(TestStateId.Processing.Value, resultState.Value);
         Assert.Equal(StateMachineResponse.UnknownState.Id, result.Id);
-        Assert.Equal($"The provided state identification could not find the corresponding state. Provided state-id: {resultState.Name}", result.Message);
+        Assert.Equal($"The provided state identification could not find the corresponding state. Provided state-id: {resultState.Value}", result.Message);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class StateMachineTests
         var result = await new StateMachine(this.core).Apply(action);
 
         // Assert
-        Assert.Equal(TestStateId.Processing.Name, resultState.Name);
+        Assert.Equal(TestStateId.Processing.Value, resultState.Value);
         Assert.Equal(StateMachineResponse.Success.Id, result.Id);
         Assert.Equal(StateMachineResponse.Success.Message, result.Message);
     }

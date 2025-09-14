@@ -1,4 +1,4 @@
-﻿using St8Ment.DependencyInjection.StateMachines.Builders;
+﻿using St8Ment.DependencyInjection.StateMachines.Abstractions;
 
 namespace St8Ment.DependencyInjection.StateMachines;
 

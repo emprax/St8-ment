@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using St8Ment.DependencyInjection.StateMachines;
-using St8Ment.DependencyInjection.StateMachines.Builders;
+using St8Ment.DependencyInjection.StateMachines.Abstractions;
 using St8Ment.StateMachines;
 using St8Ment.Tests.Integration.Utilities;
 using System;

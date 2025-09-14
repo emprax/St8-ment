@@ -27,7 +27,7 @@ public class StateMachineIntegrationTests
                     .ForInitial(TestStateId.New, bldr =>
                     {
                         bldr.On<Test1Action>().To(TestStateId.Processing)
-                            .On<Test2Action>().WithCallback(p.GetRequiredService<Test2Callback>()).To(TestStateId.Complete)
+                            .On<Test2Action>().WithCallback((Test2Callback)p.Create(typeof(Test2Callback))).To(TestStateId.Complete)
                             .OnDefault().To(TestStateId.Fault);
                     })
                     .For(TestStateId.Processing, bldr =>
@@ -48,15 +48,15 @@ public class StateMachineIntegrationTests
 
         // Act & Assert
         var result1 = await stateMachine.Apply(new Test1Action());
-        Assert.Equal(TestStateId.Processing.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Processing.Value, stateMachine.Current.Value);
         Assert.True(result1.Succeeded);
 
         var result2 = await stateMachine.Apply(new Test3Action());
-        Assert.Equal(TestStateId.New.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.New.Value, stateMachine.Current.Value);
         Assert.True(result2.Succeeded);
 
         var result3 = await stateMachine.Apply("hello");
-        Assert.Equal(TestStateId.Fault.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Fault.Value, stateMachine.Current.Value);
         Assert.True(result3.Succeeded);
 
         this.logger.VerifyNever();
@@ -70,7 +70,7 @@ public class StateMachineIntegrationTests
 
         // Act & Assert
         var result1 = await stateMachine.Apply(new Test2Action());
-        Assert.Equal(TestStateId.Complete.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Complete.Value, stateMachine.Current.Value);
         Assert.True(result1.Succeeded);
 
         this.logger.VerifyTimes(LogLevel.Information, 1);
@@ -84,11 +84,11 @@ public class StateMachineIntegrationTests
 
         // Act & Assert
         var result1 = await stateMachine.Apply(new Test1Action());
-        Assert.Equal(TestStateId.Processing.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Processing.Value, stateMachine.Current.Value);
         Assert.True(result1.Succeeded);
 
         var result2 = await stateMachine.Apply(new Test2Action());
-        Assert.Equal(TestStateId.Complete.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Complete.Value, stateMachine.Current.Value);
         Assert.True(result2.Succeeded);
 
         this.logger.VerifyNever();
@@ -106,11 +106,11 @@ public class StateMachineIntegrationTests
 
         // Act & Assert
         var result1 = await stateMachine.Apply(new Test1Action());
-        Assert.Equal(TestStateId.Processing.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Processing.Value, stateMachine.Current.Value);
         Assert.True(result1.Succeeded);
 
         var result2 = await stateMachine.Apply(input);
-        Assert.Equal(TestStateId.Fault.Name, stateMachine.Current.Name);
+        Assert.Equal(TestStateId.Fault.Value, stateMachine.Current.Value);
         Assert.True(result2.Succeeded);
 
         this.logger.VerifyNever();

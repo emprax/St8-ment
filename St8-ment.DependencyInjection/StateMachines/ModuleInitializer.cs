@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using St8Ment.DependencyInjection.StateMachines.Abstractions;
 using St8Ment.DependencyInjection.StateMachines.Builders;
 using St8Ment.StateMachines;
 using St8Ment.StateMachines.Components;
 
 namespace St8Ment.DependencyInjection.StateMachines;
 
-public static class ServiceCollectionExtensions
+public static class ModuleInitializer
 {
     public static IServiceCollection AddStateMachine(this IServiceCollection services, Action<IExtendedInitialStateComponentBuilder, IDependencyFactory> configuration)
     {

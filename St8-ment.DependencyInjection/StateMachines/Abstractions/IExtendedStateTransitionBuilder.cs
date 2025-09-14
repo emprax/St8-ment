@@ -3,7 +3,7 @@ using St8Ment.StateMachines;
 using System;
 using System.Linq.Expressions;
 
-namespace St8Ment.DependencyInjection.StateMachines.Builders;
+namespace St8Ment.DependencyInjection.StateMachines.Abstractions;
 
 public interface IExtendedStateTransitionBuilder<TInput>
 {

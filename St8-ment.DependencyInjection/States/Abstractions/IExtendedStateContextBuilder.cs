@@ -1,6 +1,6 @@
 ﻿using St8Ment.States.Abstractions.Core;
 
-namespace St8ment.DependencyInjection.Abstractions;
+namespace St8Ment.DependencyInjection.States.Abstractions;
 
 public interface IExtendedStateContextBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
 {

@@ -26,6 +26,6 @@ public class StateMachine : IStateMachine
         var result = await this.component.Apply(action, this.Current);
         this.Current = result?.State ?? this.Current;
 
-        return result?.Response ?? StateMachineResponse.ToUnknownState(this.Current.Name);
+        return result?.Response ?? StateMachineResponse.ToUnknownState(this.Current.Value);
     }
 }

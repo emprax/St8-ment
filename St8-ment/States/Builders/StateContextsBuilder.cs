@@ -21,4 +21,15 @@ public class StateContextsBuilder<TSubject>(IDictionary<string, IStateContext<TS
 
         return this;
     }
+
+    public IStateContextsBuilder<TSubject> State(StateId state)
+    {
+        var context = new StateContext<TSubject>(new Dictionary<int, IActionHandler<TSubject>>());
+        if (!contexts.TryAdd(state.Value, context))
+        {
+            contexts[state.Value] = context;
+        }
+
+        return this;
+    }
 }

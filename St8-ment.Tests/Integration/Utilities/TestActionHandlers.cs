@@ -1,16 +1,13 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using St8Ment.States;
+﻿using Microsoft.Extensions.Logging;
+using St8Ment.States.Abstractions.Core;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace St8Ment.Tests.Integration.Utilities;
 
-public class Test1ActionHandler : IActionHandler<Test1Action, TesTSubject>
+public class Test1ActionHandler(ILogger<TesTSubject> logger) : IActionHandler<TesTSubject, Test1Action>
 {
-    private readonly ILogger<TesTSubject> logger;
-
-    public Test1ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
-
-    public Task Execute(Test1Action action, IStateHandle<TesTSubject> state)
+    public Task ExecuteAsync(Test1Action action, IStateHandle<TesTSubject> state, CancellationToken cancellationToken)
     {
         logger.LogInformation("Test1-Action");
         state.Transition(TestStateId.Processing);
@@ -19,13 +16,9 @@ public class Test1ActionHandler : IActionHandler<Test1Action, TesTSubject>
     }
 }
 
-public class Test2ActionHandler : IActionHandler<Test2Action, TesTSubject>
+public class Test2ActionHandler(ILogger<TesTSubject> logger) : IActionHandler<TesTSubject, Test2Action>
 {
-    private readonly ILogger<TesTSubject> logger;
-
-    public Test2ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
-
-    public Task Execute(Test2Action action, IStateHandle<TesTSubject> state)
+    public Task ExecuteAsync(Test2Action action, IStateHandle<TesTSubject> state, CancellationToken cancellationToken)
     {
         logger.LogInformation("Test2-Action");
         state.Transition(TestStateId.Fault);
@@ -34,13 +27,9 @@ public class Test2ActionHandler : IActionHandler<Test2Action, TesTSubject>
     }
 }
 
-public class Test3ActionHandler : IActionHandler<Test3Action, TesTSubject>
+public class Test3ActionHandler(ILogger<TesTSubject> logger) : IActionHandler<TesTSubject, Test3Action>
 {
-    private readonly ILogger<TesTSubject> logger;
-
-    public Test3ActionHandler(ILogger<TesTSubject> logger) => this.logger = logger;
-
-    public Task Execute(Test3Action action, IStateHandle<TesTSubject> state)
+    public Task ExecuteAsync(Test3Action action, IStateHandle<TesTSubject> state, CancellationToken cancellationToken)
     {
         logger.LogInformation("Test3-Action");
         state.Transition(TestStateId.Complete);

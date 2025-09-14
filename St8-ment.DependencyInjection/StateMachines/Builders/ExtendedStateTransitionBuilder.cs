@@ -1,5 +1,6 @@
 ﻿using SpeciFire;
 using SpeciFire.Specifications;
+using St8Ment.DependencyInjection.StateMachines.Abstractions;
 using St8Ment.StateMachines;
 using St8Ment.StateMachines.Components;
 using System;
@@ -55,7 +56,7 @@ internal class ExtendedStateTransitionBuilder<TInput> : IExtendedStateTransition
 
             var parameters = constructor?
                 .GetParameters()?
-                .Select(p => provider.Get(p.ParameterType))?
+                .Select(p => provider.Create(p.ParameterType))?
                 .ToArray();
 
             return constructor?.Invoke(parameters) as ITransitionCallback<TInput>;
@@ -92,7 +93,7 @@ internal class ExtendedStateTransitionBuilder<TInput> : IExtendedStateTransition
 
             var parameters = constructor?
                 .GetParameters()?
-                .Select(p => provider.Get(p.ParameterType))?
+                .Select(p => provider.Create(p.ParameterType))?
                 .ToArray();
 
             return constructor?.Invoke(parameters) as ISpec<TInput>;

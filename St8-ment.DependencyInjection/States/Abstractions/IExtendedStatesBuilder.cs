@@ -1,6 +1,7 @@
 ﻿using St8Ment.States.Abstractions.Core;
+using System;
 
-namespace St8ment.DependencyInjection.Abstractions;
+namespace St8Ment.DependencyInjection.States.Abstractions;
 
 public interface IExtendedStatesBuilder
 {

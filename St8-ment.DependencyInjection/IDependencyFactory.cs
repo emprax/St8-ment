@@ -1,4 +1,6 @@
-﻿namespace St8ment.DependencyInjection.Abstractions;
+﻿using System;
+
+namespace St8Ment.DependencyInjection;
 
 public interface IDependencyFactory
 {

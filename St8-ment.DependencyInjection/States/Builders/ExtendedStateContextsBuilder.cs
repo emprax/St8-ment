@@ -1,13 +1,15 @@
-﻿using St8ment.Builders;
-using St8ment.Core;
-using St8ment.DependencyInjection.Abstractions;
-using St8Ment;
+﻿using St8Ment.DependencyInjection.States.Abstractions;
 using St8Ment.States.Abstractions.Core;
+using St8Ment.States.Builders;
+using St8Ment.States.Core;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace St8ment.DependencyInjection.Builders;
+namespace St8Ment.DependencyInjection.States.Builders;
 
 #pragma warning disable IDE0290 // Use primary constructor
-public class ExtendedStateContextsBuilder<TSubject> : IExtendedStateContextsBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
+internal class ExtendedStateContextsBuilder<TSubject> : IExtendedStateContextsBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
 {
     private readonly IDictionary<string, IStateContext<TSubject>> contexts;
     private readonly IDependencyFactory factory;
@@ -26,6 +28,17 @@ public class ExtendedStateContextsBuilder<TSubject> : IExtendedStateContextsBuil
         action.Invoke(new ExtendedStateContextBuilder<TSubject>(builder, this.factory));
 
         var context = new StateContext<TSubject>(dictionary);
+        if (!this.contexts.TryAdd(state.Value, context))
+        {
+            this.contexts[state.Value] = context;
+        }
+
+        return this;
+    }
+
+    public IExtendedStateContextsBuilder<TSubject> State(StateId state)
+    {
+        var context = new StateContext<TSubject>(new Dictionary<int, IActionHandler<TSubject>>());
         if (!this.contexts.TryAdd(state.Value, context))
         {
             this.contexts[state.Value] = context;

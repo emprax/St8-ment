@@ -1,10 +1,9 @@
-﻿using St8Ment.States;
+﻿using St8Ment.States.Abstractions.Core;
+using St8Ment.States.Core;
 
 namespace St8Ment.Example.Console.States.Utilities;
 
-public class ExampleContext : ExtendedStateSubject<ExampleContext>
+public class ExampleContext(StateId id) : IStateSubject<ExampleContext>
 {
-    public ExampleContext() { }
-
-    public ExampleContext(ExampleState stateId) => base.StateId = stateId;
+    public State State { get; } = new(id);
 }

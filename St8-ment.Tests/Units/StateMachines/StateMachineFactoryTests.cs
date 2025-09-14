@@ -47,6 +47,6 @@ public class StateMachineFactoryTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(TestStateId.New.Name, result.Current.Name);
+        Assert.Equal(TestStateId.New.Value, result.Current.Value);
     }
 }

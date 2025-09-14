@@ -1,13 +1,14 @@
-﻿using St8ment.DependencyInjection.Abstractions;
+﻿using St8Ment.DependencyInjection.States.Abstractions;
 using St8Ment.States.Abstractions.Core;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace St8ment.DependencyInjection.Builders;
+namespace St8Ment.DependencyInjection.States.Builders;
 
 #pragma warning disable IDE0290 // Use primary constructor
-public class ActionHandlerFunctor<TSubject, TAction> : IActionHandlerFunctor<TSubject, TAction>
+internal class ActionHandlerFunctor<TSubject, TAction> : IActionHandlerFunctor<TSubject, TAction>
     where TSubject : class, IStateSubject<TSubject>
     where TAction : IAction<TSubject>
 {

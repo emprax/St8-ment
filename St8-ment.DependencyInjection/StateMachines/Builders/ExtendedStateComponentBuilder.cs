@@ -1,4 +1,5 @@
 ﻿using System;
+using St8Ment.DependencyInjection.StateMachines.Abstractions;
 using St8Ment.StateMachines.Components;
 
 namespace St8Ment.DependencyInjection.StateMachines.Builders;

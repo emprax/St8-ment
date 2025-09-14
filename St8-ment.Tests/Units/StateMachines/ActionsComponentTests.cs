@@ -26,7 +26,7 @@ public class ActionsComponentTests
 
         // Assert
         Assert.Equal(StateMachineResponse.Unspecified.Id, result.Response.Id);
-        Assert.Equal(TestStateId.New.Name, result.State.Name);
+        Assert.Equal(TestStateId.New.Value, result.State.Value);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class ActionsComponentTests
 
         // Assert
         Assert.Equal(StateMachineResponse.Unspecified.Id, result.Response.Id);
-        Assert.Equal(TestStateId.New.Name, result.State.Name);
+        Assert.Equal(TestStateId.New.Value, result.State.Value);
     }
 
     [Fact]
@@ -61,6 +61,6 @@ public class ActionsComponentTests
 
         // Assert
         Assert.Equal(StateMachineResponse.Success.Id, result.Response.Id);
-        Assert.Equal(TestStateId.Processing.Name, result.State.Name);
+        Assert.Equal(TestStateId.Processing.Value, result.State.Value);
     }
 }

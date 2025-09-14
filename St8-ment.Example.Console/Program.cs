@@ -15,11 +15,5 @@ public class Program
         System.Console.WriteLine();
 
         await StateCase.Execute();
-
-        System.Console.WriteLine();
-        System.Console.WriteLine();
-        System.Console.WriteLine();
-
-        await StateForgeCase.Execute();
     }
 }

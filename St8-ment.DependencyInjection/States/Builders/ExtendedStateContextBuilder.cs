@@ -1,11 +1,11 @@
-﻿using St8ment.DependencyInjection.Abstractions;
+﻿using St8Ment.DependencyInjection.States.Abstractions;
 using St8Ment.States.Abstractions.Builders;
 using St8Ment.States.Abstractions.Core;
 
-namespace St8ment.DependencyInjection.Builders;
+namespace St8Ment.DependencyInjection.States.Builders;
 
 #pragma warning disable IDE0290 // Use primary constructor
-public class ExtendedStateContextBuilder<TSubject> : IExtendedStateContextBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
+internal class ExtendedStateContextBuilder<TSubject> : IExtendedStateContextBuilder<TSubject> where TSubject : class, IStateSubject<TSubject>
 {
     private readonly IStateContextBuilder<TSubject> builder;
     private readonly IDependencyFactory factory;
