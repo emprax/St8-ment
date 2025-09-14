@@ -1,8 +1,11 @@
-﻿using St8Ment.States;
+﻿using St8Ment.States.Abstractions.Core;
+using St8Ment.States.Core;
 
 namespace St8Ment.Tests.Units.Utilities;
 
-public class TestStateSubject : StateSubject
+public class TestStateSubject : IStateSubject<TestStateSubject>
 {
-    public TestStateSubject(StateId id) => this.StateId = id;
+    public TestStateSubject(StateId id) => this.State = new(id);
+
+    public State State { get; }
 }

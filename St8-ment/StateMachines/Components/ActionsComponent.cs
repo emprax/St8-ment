@@ -1,35 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace St8Ment.StateMachines.Components
+namespace St8Ment.StateMachines.Components;
+
+public class ActionsComponent : IItemStateComponent
 {
-    public class ActionsComponent : IItemStateComponent
+    private readonly IList<IStateComponent> components;
+
+    public ActionsComponent() => this.components = [];
+
+    public void Add(IStateComponent component) => this.components.Add(component);
+
+    public async Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id)
     {
-        private readonly IList<IStateComponent> components;
+        var response = StateMachineResponse.ToUnspecified(id.Value, typeof(TInput).Name);
+        var defaultResult = new StateTransitionResponse(response, id);
 
-        public ActionsComponent()
-            => this.components = new List<IStateComponent>();
-
-        public void Add(IStateComponent component)
-            => this.components.Add(component);
-
-        public async Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id)
+        foreach (var component in this.components)
         {
-            var response = StateMachineResponse.ToUnspecified(id.Name, typeof(TInput).Name);
-            var defaultResult = new StateTransitionResponse(response, id);
-
-            foreach (var component in components)
+            var result = await (component?.Apply(input, id) ?? Task.FromResult(defaultResult));
+            if (result?.Response?.Succeeded ?? false)
             {
-                var result = await (component?.Apply(input, id) ?? Task.FromResult(defaultResult));
-                if (result?.Response?.Succeeded ?? false)
-                {
-                    return result;
-                }
-
-                defaultResult = result;
+                return result;
             }
-            
-            return defaultResult;
+
+            defaultResult = result!;
         }
+        
+        return defaultResult;
     }
 }
