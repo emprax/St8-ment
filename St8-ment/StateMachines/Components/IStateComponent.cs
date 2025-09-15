@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace St8Ment.StateMachines.Components
+namespace St8Ment.StateMachines.Components;
+
+public interface IStateComponent
 {
-    public interface IStateComponent
-    {
-        Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id);
-    }
+    Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id);
 }

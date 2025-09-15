@@ -1,7 +1,6 @@
-﻿namespace St8Ment.StateMachines.Components
+﻿namespace St8Ment.StateMachines.Components;
+
+public interface IItemStateComponent : IStateComponent
 {
-    public interface IItemStateComponent : IStateComponent
-    {
-        void Add(IStateComponent component);
-    }
+    void Add(IStateComponent component);
 }

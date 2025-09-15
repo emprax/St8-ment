@@ -1,15 +1,12 @@
-﻿namespace St8Ment.Example.Console
-{
-    public class ExampleState : StateId
-    {
-        public static ExampleState Start = new("START");
-        public static ExampleState New = new("NEW");
-        public static ExampleState Updating = new("UPDATING");
-        public static ExampleState Complete = new("COMPLETE");
-        public static ExampleState Published = new("PUBLISHED");
-        public static ExampleState Revoked = new("REVOKED");
-        public static ExampleState Fault = new("FAULT");
+﻿namespace St8Ment.Example.Console;
 
-        private ExampleState(string name) : base(name) { }
-    }
+public static class ExampleState
+{
+    public readonly static StateId Start = new("START");
+    public readonly static StateId New = new("NEW");
+    public readonly static StateId Updating = new("UPDATING");
+    public readonly static StateId Complete = new("COMPLETE");
+    public readonly static StateId Published = new("PUBLISHED");
+    public readonly static StateId Revoked = new("REVOKED");
+    public readonly static StateId Fault = new("FAULT");
 }

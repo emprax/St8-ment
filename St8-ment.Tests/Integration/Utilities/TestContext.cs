@@ -1,14 +1,9 @@
-﻿using System.Threading.Tasks;
-using St8Ment.States;
+﻿using St8Ment.States.Abstractions.Core;
+using St8Ment.States.Core;
 
-namespace St8Ment.Tests.Integration.Utilities
+namespace St8Ment.Tests.Integration.Utilities;
+
+public class TesTSubject(StateId id) : IStateSubject<TesTSubject>
 {
-    public class TesTSubject : ExtendedStateSubject<TesTSubject>
-    {
-        public TesTSubject() { }
-
-        public TesTSubject(StateId id) => this.StateId = id;
-
-        public TesTSubject(IState<TesTSubject> state) => this.SetState(state);
-    }
+    public State State { get; } = new(id);
 }

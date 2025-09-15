@@ -1,38 +1,32 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace St8Ment.StateMachines.Components
+namespace St8Ment.StateMachines.Components;
+
+public class CallbackComponent(Func<object?> callback) : IItemStateComponent
 {
-    public class CallbackComponent : IItemStateComponent
+    private IStateComponent? next;
+
+    public void Add(IStateComponent component) => this.next = component;
+
+    public async Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id)
     {
-        private readonly Func<object> callback;
-        private IStateComponent next;
-
-        public CallbackComponent(Func<object> callback)
-            => this.callback = callback;
-
-        public void Add(IStateComponent component)
-            => this.next = component;
-
-        public async Task<StateTransitionResponse> Apply<TInput>(TInput input, StateId id)
+        if (callback?.Invoke() is ITransitionCallback<TInput> transitionCallback)
         {
-            if (this.callback?.Invoke() is ITransitionCallback<TInput> callback)
+            try
             {
-                try
-                {
-                    await callback.Execute(input);
-                }
-                catch (Exception exception)
-                {
-                    return new StateTransitionResponse(StateMachineResponse.ToException(exception), id);
-                }
+                await transitionCallback.Execute(input);
             }
-
-            var response = StateMachineResponse.ToUnspecified(id.Name, typeof(TInput).Name);
-            return await (this.next?.Apply(input, id) ?? ToResponse(response, id));
+            catch (Exception exception)
+            {
+                return new StateTransitionResponse(StateMachineResponse.ToException(exception), id);
+            }
         }
 
-        private static Task<StateTransitionResponse> ToResponse(StateMachineResponse response, StateId id)
-            => Task.FromResult(new StateTransitionResponse(response, id));
+        var response = StateMachineResponse.ToUnspecified(id.Value, typeof(TInput).Name);
+        return await (this.next?.Apply(input, id) ?? ToResponse(response, id));
     }
+
+    private static Task<StateTransitionResponse> ToResponse(StateMachineResponse response, StateId id)
+        => Task.FromResult(new StateTransitionResponse(response, id));
 }

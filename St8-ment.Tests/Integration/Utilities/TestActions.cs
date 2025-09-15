@@ -1,25 +1,24 @@
-﻿using St8Ment.States;
+﻿using St8Ment.States.Abstractions.Core;
 
-namespace St8Ment.Tests.Integration.Utilities
+namespace St8Ment.Tests.Integration.Utilities;
+
+public class Test1Action : IAction<TesTSubject>
 {
-    public class Test1Action : IAction
-    {
-        public Test1Action() => ActionName = "TEST-1";
+    public Test1Action() => this.ActionName = "TEST-1";
 
-        public string ActionName { get; }
-    }
+    public string ActionName { get; }
+}
 
-    public class Test2Action : IAction
-    {
-        public Test2Action() => ActionName = "TEST-2";
+public class Test2Action : IAction<TesTSubject>
+{
+    public Test2Action() => this.ActionName = "TEST-2";
 
-        public string ActionName { get; set; }
-    }
+    public string ActionName { get; set; }
+}
 
-    public class Test3Action : IAction
-    {
-        public Test3Action() => ActionName = "TEST-3";
+public class Test3Action : IAction<TesTSubject>
+{
+    public Test3Action() => this.ActionName = "TEST-3";
 
-        public string ActionName { get; }
-    }
+    public string ActionName { get; }
 }

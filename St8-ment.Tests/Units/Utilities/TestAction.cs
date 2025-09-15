@@ -1,11 +1,9 @@
-﻿using St8Ment.States;
+﻿using St8Ment.States.Abstractions.Core;
 
-namespace St8Ment.Tests.Units.Utilities
-{
-    public class TestAction : IAction
-    {
-        public TestAction(string actionName) => ActionName = actionName;
+namespace St8Ment.Tests.Units.Utilities;
 
-        public string ActionName { get; }
-    }
-}
+public record TestAction(string ActionName) : IAction<TestStateSubject>;
+
+public class OpenAction : IAction<TestStateSubject>;
+
+public class CloseAction : IAction<TestStateSubject>;

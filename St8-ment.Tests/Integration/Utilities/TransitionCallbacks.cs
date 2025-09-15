@@ -2,44 +2,31 @@
 using Microsoft.Extensions.Logging;
 using St8Ment.StateMachines;
 
-namespace St8Ment.Tests.Integration.Utilities
+namespace St8Ment.Tests.Integration.Utilities;
+
+public class Test1Callback(ILogger<TesTSubject> logger) : ITransitionCallback<Test1Action>
 {
-    public class Test1Callback : ITransitionCallback<Test1Action>
+    public Task Execute(Test1Action action)
     {
-        private readonly ILogger<TesTSubject> logger;
-
-        public Test1Callback(ILogger<TesTSubject> logger) => this.logger = logger;
-
-        public Task Execute(Test1Action action)
-        {
-            this.logger.LogInformation(action.ActionName);
-            return Task.CompletedTask;
-        }
+        logger.LogInformation(action.ActionName);
+        return Task.CompletedTask;
     }
+}
 
-    public class Test2Callback : ITransitionCallback<Test2Action>
+public class Test2Callback(ILogger<TesTSubject> logger) : ITransitionCallback<Test2Action>
+{
+    public Task Execute(Test2Action action)
     {
-        private readonly ILogger<TesTSubject> logger;
-
-        public Test2Callback(ILogger<TesTSubject> logger) => this.logger = logger;
-
-        public Task Execute(Test2Action action)
-        {
-            this.logger.LogInformation(action.ActionName);
-            return Task.CompletedTask;
-        }
+        logger.LogInformation(action.ActionName);
+        return Task.CompletedTask;
     }
+}
 
-    public class Test3Callback : ITransitionCallback<Test3Action>
+public class Test3Callback(ILogger<TesTSubject> logger) : ITransitionCallback<Test3Action>
+{
+    public Task Execute(Test3Action action)
     {
-        private readonly ILogger<TesTSubject> logger;
-
-        public Test3Callback(ILogger<TesTSubject> logger) => this.logger = logger;
-
-        public Task Execute(Test3Action action)
-        {
-            this.logger.LogInformation(action.ActionName);
-            return Task.CompletedTask;
-        }
+        logger.LogInformation(action.ActionName);
+        return Task.CompletedTask;
     }
 }

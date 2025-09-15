@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace St8Ment.StateMachines
+namespace St8Ment.StateMachines;
+
+public interface ITransitionCallback<TInput>
 {
-    public interface ITransitionCallback<TInput>
-    {
-        Task Execute(TInput action);
-    }
+    Task Execute(TInput action);
 }

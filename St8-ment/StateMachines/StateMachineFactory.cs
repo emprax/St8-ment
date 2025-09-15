@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using St8Ment.StateMachines.Builders;
+using St8Ment.StateMachines.Components;
+using System;
 
-namespace St8Ment.StateMachines
+namespace St8Ment.StateMachines;
+
+public class StateMachineFactory : IStateMachineFactory
 {
-    public class StateMachineFactory<TKey> : IStateMachineFactory<TKey>
+    public IStateMachineProvider<TKey> Create<TKey>(Action<IStateMachineFactoryBuilder<TKey>> action) where TKey : notnull
     {
-        private readonly IDictionary<TKey, Func<IStateMachineCore>> stateMachines;
+        var builder = new StateMachineFactoryBuilder<TKey>();
+        action.Invoke(builder);
+        return new StateMachineProvider<TKey>(builder.Build());
+    }
 
-        public StateMachineFactory(IDictionary<TKey, Func<IStateMachineCore>> stateMachines) => this.stateMachines = stateMachines;
+    public IStateMachine Create(Action<IInitialStateComponentBuilder> action)
+    {
+        var component = new StateComponentCollection();
+        var builder = new InitialStateComponentBuilder(component);
 
-        public IStateMachine Create(TKey key) => this.stateMachines.TryGetValue(key, out var factory)
-            ? new StateMachine(factory.Invoke())
-            : null;
+        action?.Invoke(builder);
+        return new StateMachine(new StateMachineCore(builder.InitialState, component));
     }
 }
